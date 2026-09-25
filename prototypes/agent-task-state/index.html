@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flauz — Agent Task State (prototype #6)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+	<div class="topbar-inner">
+		<div class="brand">
+			<span class="brand-mark">Flauz</span>
+			<span class="brand-sub">Agent Task State · charter prototype #6 · Plan → Execution → Verification with HumanApproval gates</span>
+		</div>
+		<div class="topbar-actions">
+			<span id="mode-badge" class="badge mode" title="persistence mode">checking…</span>
+			<button id="reset-btn" class="btn ghost" type="button">Reset demo</button>
+		</div>
+	</div>
+</header>
+
+<main class="page">
+	<section class="intro">
+		<p>
+			Task/agent state rehearsal for <strong>D-8/D-9</strong> (workflow envelope + <code>.flauz/</code> persistence):
+			a <code>flauz.tasks/v0</code> envelope rendered as a timeline. Every state and gate maps onto a native
+			Code&nbsp;OSS surface (<code>ChatSessionStatus</code>, chat-editing checkpoints, SCM artifact rows) — see the
+			mapping legend below and <code>README.md</code> for the cited paths.
+		</p>
+	</section>
+
+	<div id="error-banner" class="banner error" hidden></div>
+
+	<section id="tasks" class="tasks" aria-live="polite"></section>
+
+	<section class="legend">
+		<h2>Mapping legend (native surfaces @ 9bf9ae764da)</h2>
+		<table>
+			<thead><tr><th>Prototype concept</th><th>Native surface</th><th>Path (reference tree)</th></tr></thead>
+			<tbody>
+				<tr><td>state → session status</td><td><code>ChatSessionStatus</code>: InProgress(2) / NeedsInput(3) / Completed(1) / Failed(0)</td><td><code>src/vscode-dts/vscode.proposed.chatSessionsProvider.d.ts:10-30</code></td></tr>
+				<tr><td>HumanApproval gates</td><td>tool-confirmation → <code>WaitingForConfirmation</code>/<code>WaitingForPostApproval</code> → NeedsInput</td><td><code>contrib/chat/browser/agentSessions/agentSessionApprovalModel.ts:120-158</code></td></tr>
+				<tr><td>Execution→Verification checkpoint</td><td><code>chatEditingService</code> snapshots: <code>createSnapshot(requestId, stopId)</code></td><td><code>contrib/chat/browser/chatEditing/chatEditingSession.ts:386-389</code></td></tr>
+				<tr><td>evidence artifacts</td><td>SCM artifact groups/artifacts (timestamp + command)</td><td><code>src/vscode-dts/vscode.proposed.scmArtifactProvider.d.ts</code></td></tr>
+				<tr><td>task timing</td><td><code>ChatSessionItem.timing</code> {created, lastRequestStarted, lastRequestEnded}</td><td><code>vscode.proposed.chatSessionsProvider.d.ts:360-391</code></td></tr>
+				<tr><td>persistence</td><td>private state in editor storage; shareable envelope in workspace <code>.flauz/</code> (git-diffable)</td><td>DL-9/D-9 · <code>chatEditingSessionStorage.ts:43-47</code> precedent</td></tr>
+			</tbody>
+		</table>
+	</section>
+</main>
+
+<footer class="footer">
+	<div class="footer-inner">
+		<span>flauz-code-lab · wave2/e-perf-migration · prototypes/agent-task-state</span>
+		<span>zero-install: <code>node server.mjs</code> → http://127.0.0.1:4173 · envelope: <code>.flauz/tasks.json</code></span>
+	</div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

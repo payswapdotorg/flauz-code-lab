@@ -1,0 +1,95 @@
+=== fresh envelope state (server-side seed) ===
+schema: flauz.tasks/v0
+tasks: T-001:awaiting-approval T-002:verify T-003:done
+
+=== browser: open + verify gate state renders ===
+[agent-browser] launched browser
+✓ Flauz — Agent Task State (prototype #6)
+  http://127.0.0.1:4173/
+✓ Done
+- button "Reset demo" [ref=e1]
+- button "✓ Approve plan" [ref=e3]
+- button "Request changes" [ref=e4]
+- button "Verify ✓ pass" [ref=e5]
+- button "Verify ✗ fail (rework)" [ref=e6]
+- button "Cancel" [ref=e7]
+- heading "Mapping legend (native surfaces @ 9bf9ae764da)" [level=2, ref=e2]
+- columnheader "PROTOTYPE CONCEPT" [ref=e26]
+- columnheader "NATIVE SURFACE" [ref=e27]
+- columnheader "PATH (REFERENCE TREE)" [ref=e28]
+- cell "state → session status" [ref=e8]
+- cell "ChatSessionStatus : InProgress(2) / NeedsInput(3) / Completed(1) / Failed(0)" [ref=e9]
+- cell "src/vscode-dts/vscode.proposed.chatSessionsProvider.d.ts:10-30" [ref=e10]
+- cell "HumanApproval gates" [ref=e11]
+- cell "tool-confirmation → WaitingForConfirmation / WaitingForPostApproval → NeedsInput" [ref=e12]
+- cell "contrib/chat/browser/agentSessions/agentSessionApprovalModel.ts:120-158" [ref=e13]
+
+=== BEFORE screenshot (T-001 at HumanApproval gate) ===
+✓ Screenshot saved to /home/z/flauz-code-lab/evidence/e-perf-migration/agent-task-state-desktop.png
+
+=== interact: click ✓ Approve plan (gate 1) ===
+✓ Done
+✓ Done
+- article
+  - button "Report for verification" [ref=e30]
+  - button "Mark failed" [ref=e31]
+  - button "Cancel" [ref=e32]
+- button "Report for verification" [ref=e30]
+- button "Mark failed" [ref=e31]
+- button "Cancel" [ref=e32]
+
+=== AFTER screenshot ===
+✓ Screenshot saved to /home/z/flauz-code-lab/evidence/e-perf-migration/agent-task-state-interaction.png
+
+=== API calls seen by the page ===
+[5798.6] GET http://127.0.0.1:4173/api/tasks (Fetch) 200
+[5798.7] GET http://127.0.0.1:4173/api/tasks (Fetch) 200
+[5798.9] POST http://127.0.0.1:4173/api/tasks/T-001/events (Fetch) 200
+[5798.10] GET http://127.0.0.1:4173/api/tasks (Fetch) 200
+
+=== invalid transition rejected (server validation) ===
+HTTP 409 {"error":409,"message":"event 'submit-plan' invalid from state 'execute' (allowed from: plan)"}
+=== mobile viewport check ===
+✓ Done
+✓ Screenshot saved to /home/z/flauz-code-lab/evidence/e-perf-migration/agent-task-state-mobile.png
+
+=== console errors (final) ===
+(empty = clean)
+✓ Browser closed
+
+=== persisted envelope after browser interaction ===
+schema: flauz.tasks/v0
+T-001: execute | history: created > submit-plan > approve
+T-002: verify | T-003: done
+
+=== server log ===
+node:events:505
+    throw er; // Unhandled 'error' event
+    ^
+
+Error: listen EADDRINUSE: address already in use 127.0.0.1:4173
+    at Server.setupListenHandle [as _listen2] (node:net:2328:16)
+    at listenInCluster (node:net:2437:12)
+    at node:net:2666:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2416:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 4173
+}
+
+Node.js v24.21.0
+DONE
+
+=== verification note (transparency) ===
+The "server log" section above shows EADDRINUSE for the *second* instance attempted in
+this call: a server.mjs instance from the immediately-preceding in-call verification run
+was still bound to 127.0.0.1:4173 (same code, same directory, same envelope file —
+an earlier kill hit the wrapper subshell PID due to shell & precedence). That leftover
+instance served every request in this transcript; the API network trace, HTTP 409
+validation response, and on-disk envelope check above are the authoritative proof.
+Stray servers were pkill-ed after this run.

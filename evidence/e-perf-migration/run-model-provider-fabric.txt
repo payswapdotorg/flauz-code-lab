@@ -1,0 +1,95 @@
+# Run transcript: model-provider-fabric (charter prototype #3)
+# command: node index.mjs   (zero-install, Node v24.21.0)
+# date: 2026-09-25T04:56:24Z · tree ref: payswapdotorg/Flauz @ 9bf9ae764da (semantics mirrored)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+FLAUZ — MODEL PROVIDER FABRIC (CHARTER PROTOTYPE #3)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+zero-install Node v24.21.0 · seed 1337 · deterministic transcript
+selector semantics mirror: languageModels.ts:1412-1435 @ 9bf9ae764da (strict ===, undefined=wildcard, empty selector => all)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 1) Model registry (6 models, 6 vendors)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+internal id                   vendor     family            maxIn    in$/1M  out$/1M priceCat  category
+openai/gpt-5-codex            openai     gpt-5-codex       400000   1.25    10      high      powerful
+anthropic/claude-sonnet-4-5   anthropic  claude-sonnet-4.5 200000   3       15      high      powerful
+qwen/qwen3-coder-plus         qwen       qwen3-coder       262144   0.35    1.25    low       versatile
+muse/muse-coder-1             muse       muse-coder        128000   0.1     0.4     low       lightweight
+copilot/copilot-gpt-5         copilot    gpt-5             272000   —       —       medium    versatile
+ollama/qwen3:14b              ollama     qwen3             32768    0       0       low       lightweight
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 2) Selector matrix (vscode.lm.selectChatModels semantics)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+{ }                      (omitted => all models)     -> 6 match(es): openai/gpt-5-codex, anthropic/claude-sonnet-4-5, qwen/qwen3-coder-plus, muse/muse-coder-1, copilot/copilot-gpt-5, ollama/qwen3:14b
+{ vendor: 'anthropic' }                              -> 1 match(es): anthropic/claude-sonnet-4-5
+{ family: 'gpt-5-codex' }                            -> 1 match(es): openai/gpt-5-codex
+{ id: 'qwen3:14b' }                                  -> 1 match(es): ollama/qwen3:14b
+{ vendor: 'copilot', family: 'gpt-5' }               -> 1 match(es): copilot/copilot-gpt-5
+{ vendor: 'Anthropic' }   (case-sensitive => no match) -> 0 match(es)
+{ id: 'gpt-4' }           (unknown id => no match)   -> 0 match(es)
+
+NOTE: empty selector returns ALL models (d.ts:20767 "When omitted all chat
+models are returned") — the old "illegal open-ended selector" throw does not
+exist at 9bf9ae7 (verified: languageModels.ts:1412-1435 has no such check).
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 3) Vendor resolution = provider-extension activation (one-time, then cached)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+activate onLanguageModelChatProvider:openai         by flauz-models.openai        +90ms (one-time, simulated)
+activate onLanguageModelChatProvider:anthropic      by flauz-models.anthropic     +110ms (one-time, simulated)
+activate onLanguageModelChatProvider:qwen           by flauz-models.qwen          +70ms (one-time, simulated)
+activate onLanguageModelChatProvider:muse           by flauz-models.muse          +60ms (one-time, simulated)
+activate onLanguageModelChatProvider:copilot        by github.copilot-chat        +130ms (one-time, simulated)
+activate onLanguageModelChatProvider:ollama         by flauz-models.ollama        +50ms (one-time, simulated)
+mirrors languageModels.ts:1223-1244: _resolveAllLanguageModels activates
+onLanguageModelChatProvider:<vendor> before provider.provideLanguageModelChatInfo —
+=> Flauz pre-warms vendors at service handshake (PERFORMANCE-PLAN §5.1).
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 4) Route one prompt to two models (per-model cost/latency accounting)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+prompt (32 tok): "Draft the release notes for the evidence ledger v0 from the merged chat-edit…"
+
+  route A: { vendor: 'anthropic' }
+    model      : Claude Sonnet 4.5 (anthropic/claude-sonnet-4-5)
+    latency    : 628 ms (ttfb 398 ms + stream) · 246.8 tok/s
+    tokens     : in 32 · out 155
+    cost       : $0.002421  [32tok×$3/1M + 155tok×$15/1M]  (metered)
+    reply      : [claude-sonnet-4-5] Draft the release notes for the … — 155 tokens of mock output over 3 streamed chunks.
+
+  route B: { family: 'gpt-5-codex' }
+    model      : Codex (GPT-5-Codex) (openai/gpt-5-codex)
+    latency    : 454 ms (ttfb 242 ms + stream) · 326 tok/s
+    tokens     : in 32 · out 148
+    cost       : $0.001520  [32tok×$1.25/1M + 148tok×$10/1M]  (metered)
+    reply      : [gpt-5-codex] Draft the release notes for the … — 148 tokens of mock output over 4 streamed chunks.
+
+  cross-model delta: +174 ms · $0.000901
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 5) Flauz routing policy on top of the fabric (D-2 decoupling proof)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+task=complex  -> openai/gpt-5-codex       (category=powerful)
+            latency 472 ms · cost $0.001490 · metered
+task=light    -> ollama/qwen3:14b         (priceCategory=low, lowest inputCost)
+            latency 1073 ms · cost $0.000000 · free (local)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+## 6) What this proves (D-2 / DL-3 multi-model decoupling)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+  1. The routing layer composes {vendor,family,version,id} selectors only —
+     no vendor-specific code paths; providers plug in via the provider
+     registry (registerLanguageModelChatProvider, vendor globally unique).
+  2. Cost/latency accounting hooks exist per request (in/out tokens, per-1M
+     costs from languageModelPricing.d.ts field names) — the Flauz ledger
+     consumes exactly this shape (C-21: upstream has no cross-agent
+     accounting; that is Flauz-layer value-add).
+  3. Unmetered entries (subscription/local) are first-class: pricing label
+     without per-token costs.
+  4. Vendor cold-start = activation cost — pre-warm at handshake.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+run report written: out/run-report.json (committed as evidence)
+────────────────────────────────────────────────────────────────────────────────────────────────────

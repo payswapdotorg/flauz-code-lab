@@ -1,0 +1,21 @@
+=== preview interaction via same-origin iframe DOM ===
+[agent-browser] launched browser
+✓ Flauz Wave 2 — Worker E prototypes
+  http://127.0.0.1:3000/
+✓ Done
+--- T-001 state badge BEFORE ---
+"awaiting-approval · needsinput(3)"
+--- DOM click on ✓ Approve plan (gate 1) ---
+null
+✓ Done
+--- T-001 state badge AFTER ---
+"execute · inprogress(2)"
+--- host API state after click ---
+T-001: execute | history: created > submit-plan > approve
+--- screenshot after interaction ---
+✓ Screenshot saved to /home/z/flauz-code-lab/evidence/e-perf-migration/preview-host-after-approve.png
+saved
+--- console errors ---
+(empty = clean)
+✓ Browser closed
+DONE

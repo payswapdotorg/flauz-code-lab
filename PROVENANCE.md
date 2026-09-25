@@ -1,7 +1,6 @@
-# Wave 1 / Worker A delivery provenance
+# Wave 2 / Worker E delivery provenance
 
-- Worker session: flauz-A4-w1 (chat.z.ai agents-tab, GLM-5.3 + Full-Stack), chat 9b2885f5-7ecc-4c9d-944a-ae141d9f4cf7, dispatched by TL#2.
-- Original work: branch wave1/a-architecture (8 commits) in the worker sandbox at /home/z/code-lab @ c81b44e (per worker report; git transit blocked — the platform redacts push tokens from prompts).
-- Transit: worker re-emitted all 14 deliverable files through the chat transcript (headers `FILE: <path>`); TL reconstructed byte-faithful content from the transcript extraction (dense DOM sweep + report quotes) at the integration station and committed it here.
-- Evidence: raw transcript extractions archived by the TL at replay2/scripts/worker-reports/flauz-A4-w1-full-*.txt.
-- Fidelity caveat: reconstruction is from the rendered transcript; fenced-code whitespace may differ cosmetically from the sandbox originals. The worker's own sha256 MANIFEST could not be carried across (sandbox unreachable via API). Content authority: the worker's chat 9b2885f5.
+- Worker session: flauz-E-w2 (chat.z.ai agents-tab, GLM-5.3 + Full-Stack), chat 456c6517-9ed5-47f9-9956-e36e042f95f0, dispatched by TL#2 via the w2_relay daemon (landed on the first relay round).
+- Original work: branch wave2/e-perf-migration (4 local commits @ daaa1ff2) in the worker sandbox, 33 files, +3,454 lines vs main.
+- Transit: worker staged to the sandbox template root; TL harvested via the workspaces files archive endpoint (rev 97dc2087, gzip tar; sha256 verified 48/48 against the worker's MANIFEST.txt; PNGs base64 re-encoded for the GitHub contents API). The staging turn executed server-side while the DOM render was wedged (lesson 19b) — the archive at the fresh git rev captured it.
+- Worker report highlights: PERFORMANCE-PLAN grounded in live tree code (first-token = 4 logical RPCs ≈ 12 wire messages; affinity = exactly one extra ext-host utility process; per-surface memory budgets on the 2-core/4GB floor; 8-row risk table). MIGRATION-PLAN concurs DL-11/DL-12 (pristine main + flauz/main; monthly-while-zero sync; additive-path layout) with Wave 3/4/5 roadmap + exit criteria. Both charter prototypes RAN: model-provider-fabric (selector semantics mirrored from languageModels.ts:1412-1435; per-model cost/latency accounting) and agent-task-state (live ChatSessionStatus mapping; POST /api/tasks/T-001/events 200; .flauz/tasks.json flauz.tasks/v0 envelope; browser-verified).

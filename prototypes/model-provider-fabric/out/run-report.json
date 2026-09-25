@@ -1,0 +1,292 @@
+{
+  "seed": "1337",
+  "generatedAt": "2026-09-25T04:56:24.250Z",
+  "registry": [
+    {
+      "name": "Codex (GPT-5-Codex)",
+      "id": "gpt-5-codex",
+      "vendor": "openai",
+      "family": "gpt-5-codex",
+      "version": "2025-09",
+      "maxInputTokens": 400000,
+      "pricing": "$1.25/$10.00 per 1M tokens",
+      "inputCost": 1.25,
+      "outputCost": 10,
+      "cacheCost": 0.31,
+      "cacheWriteCost": 1.25,
+      "priceCategory": "high",
+      "category": "powerful",
+      "profile": {
+        "ttfbMs": 240,
+        "msPerChunk": 55,
+        "chunks": 4,
+        "verbosity": 1
+      }
+    },
+    {
+      "name": "Claude Sonnet 4.5",
+      "id": "claude-sonnet-4-5",
+      "vendor": "anthropic",
+      "family": "claude-sonnet-4.5",
+      "version": "2025-10",
+      "maxInputTokens": 200000,
+      "pricing": "$3.00/$15.00 per 1M tokens",
+      "inputCost": 3,
+      "outputCost": 15,
+      "cacheCost": 0.3,
+      "cacheWriteCost": 3.75,
+      "priceCategory": "high",
+      "category": "powerful",
+      "profile": {
+        "ttfbMs": 420,
+        "msPerChunk": 70,
+        "chunks": 3,
+        "verbosity": 1.15
+      }
+    },
+    {
+      "name": "Qwen3 Coder Plus",
+      "id": "qwen3-coder-plus",
+      "vendor": "qwen",
+      "family": "qwen3-coder",
+      "version": "2025-08",
+      "maxInputTokens": 262144,
+      "pricing": "$0.35/$1.25 per 1M tokens",
+      "inputCost": 0.35,
+      "outputCost": 1.25,
+      "cacheCost": 0.09,
+      "cacheWriteCost": 0.35,
+      "priceCategory": "low",
+      "category": "versatile",
+      "profile": {
+        "ttfbMs": 310,
+        "msPerChunk": 45,
+        "chunks": 4,
+        "verbosity": 0.95
+      }
+    },
+    {
+      "name": "Muse Coder 1",
+      "id": "muse-coder-1",
+      "vendor": "muse",
+      "family": "muse-coder",
+      "version": "2025-04",
+      "maxInputTokens": 128000,
+      "pricing": "$0.10/$0.40 per 1M tokens",
+      "inputCost": 0.1,
+      "outputCost": 0.4,
+      "cacheCost": 0.02,
+      "cacheWriteCost": 0.1,
+      "priceCategory": "low",
+      "category": "lightweight",
+      "profile": {
+        "ttfbMs": 260,
+        "msPerChunk": 40,
+        "chunks": 3,
+        "verbosity": 0.8
+      }
+    },
+    {
+      "name": "Copilot GPT-5 (subscription)",
+      "id": "copilot-gpt-5",
+      "vendor": "copilot",
+      "family": "gpt-5",
+      "version": "2025-09",
+      "maxInputTokens": 272000,
+      "pricing": "Included with Copilot subscription",
+      "priceCategory": "medium",
+      "category": "versatile",
+      "profile": {
+        "ttfbMs": 380,
+        "msPerChunk": 60,
+        "chunks": 3,
+        "verbosity": 1
+      }
+    },
+    {
+      "name": "Qwen3 14B (local, Ollama)",
+      "id": "qwen3:14b",
+      "vendor": "ollama",
+      "family": "qwen3",
+      "version": "2025-07",
+      "maxInputTokens": 32768,
+      "pricing": "Free (local)",
+      "inputCost": 0,
+      "outputCost": 0,
+      "priceCategory": "low",
+      "category": "lightweight",
+      "profile": {
+        "ttfbMs": 650,
+        "msPerChunk": 140,
+        "chunks": 3,
+        "verbosity": 0.9
+      }
+    }
+  ],
+  "selectorMatrix": [
+    {
+      "selector": {},
+      "matches": [
+        "openai/gpt-5-codex",
+        "anthropic/claude-sonnet-4-5",
+        "qwen/qwen3-coder-plus",
+        "muse/muse-coder-1",
+        "copilot/copilot-gpt-5",
+        "ollama/qwen3:14b"
+      ]
+    },
+    {
+      "selector": {
+        "vendor": "anthropic"
+      },
+      "matches": [
+        "anthropic/claude-sonnet-4-5"
+      ]
+    },
+    {
+      "selector": {
+        "family": "gpt-5-codex"
+      },
+      "matches": [
+        "openai/gpt-5-codex"
+      ]
+    },
+    {
+      "selector": {
+        "id": "qwen3:14b"
+      },
+      "matches": [
+        "ollama/qwen3:14b"
+      ]
+    },
+    {
+      "selector": {
+        "vendor": "copilot",
+        "family": "gpt-5"
+      },
+      "matches": [
+        "copilot/copilot-gpt-5"
+      ]
+    },
+    {
+      "selector": {
+        "vendor": "Anthropic"
+      },
+      "matches": []
+    },
+    {
+      "selector": {
+        "id": "gpt-4"
+      },
+      "matches": []
+    }
+  ],
+  "routing": [
+    {
+      "route": "route A: { vendor: 'anthropic' }",
+      "model": "anthropic/claude-sonnet-4-5",
+      "name": "Claude Sonnet 4.5",
+      "selectorMatch": "{\"vendor\":\"anthropic\",\"family\":\"claude-sonnet-4.5\"}",
+      "latencyMs": 628,
+      "ttfbMs": 398,
+      "inTokens": 32,
+      "outTokens": 155,
+      "inCost": 0.000096,
+      "outCost": 0.002325,
+      "totalCost": 0.002421,
+      "costFormula": "32tok×$3/1M + 155tok×$15/1M",
+      "metered": "metered",
+      "tokensPerSec": 246.8,
+      "replyPreview": "[claude-sonnet-4-5] Draft the release notes for the … — 155 tokens of mock output over 3 streamed chunks."
+    },
+    {
+      "route": "route B: { family: 'gpt-5-codex' }",
+      "model": "openai/gpt-5-codex",
+      "name": "Codex (GPT-5-Codex)",
+      "selectorMatch": "{\"vendor\":\"openai\",\"family\":\"gpt-5-codex\"}",
+      "latencyMs": 454,
+      "ttfbMs": 242,
+      "inTokens": 32,
+      "outTokens": 148,
+      "inCost": 0.00004,
+      "outCost": 0.00148,
+      "totalCost": 0.00152,
+      "costFormula": "32tok×$1.25/1M + 148tok×$10/1M",
+      "metered": "metered",
+      "tokensPerSec": 326,
+      "replyPreview": "[gpt-5-codex] Draft the release notes for the … — 148 tokens of mock output over 4 streamed chunks."
+    },
+    {
+      "route": "policy:complex",
+      "model": "openai/gpt-5-codex",
+      "name": "Codex (GPT-5-Codex)",
+      "selectorMatch": "{\"vendor\":\"openai\",\"family\":\"gpt-5-codex\"}",
+      "latencyMs": 472,
+      "ttfbMs": 249,
+      "inTokens": 32,
+      "outTokens": 145,
+      "inCost": 0.00004,
+      "outCost": 0.00145,
+      "totalCost": 0.00149,
+      "costFormula": "32tok×$1.25/1M + 145tok×$10/1M",
+      "metered": "metered",
+      "tokensPerSec": 307.2,
+      "replyPreview": "[gpt-5-codex] Draft the release notes for the … — 145 tokens of mock output over 4 streamed chunks."
+    },
+    {
+      "route": "policy:light",
+      "model": "ollama/qwen3:14b",
+      "name": "Qwen3 14B (local, Ollama)",
+      "selectorMatch": "{\"vendor\":\"ollama\",\"family\":\"qwen3\"}",
+      "latencyMs": 1073,
+      "ttfbMs": 692,
+      "inTokens": 15,
+      "outTokens": 61,
+      "inCost": 0,
+      "outCost": 0,
+      "totalCost": 0,
+      "costFormula": "15tok×$0/1M + 61tok×$0/1M",
+      "metered": "free (local)",
+      "tokensPerSec": 56.8,
+      "replyPreview": "[qwen3:14b] Summarize the watcher exclude defaults for … — 61 tokens of mock output over 3 streamed chunks."
+    }
+  ],
+  "activationLog": [
+    {
+      "event": "onLanguageModelChatProvider:openai",
+      "extension": "flauz-models.openai",
+      "activationMs": 90,
+      "simulated": true
+    },
+    {
+      "event": "onLanguageModelChatProvider:anthropic",
+      "extension": "flauz-models.anthropic",
+      "activationMs": 110,
+      "simulated": true
+    },
+    {
+      "event": "onLanguageModelChatProvider:qwen",
+      "extension": "flauz-models.qwen",
+      "activationMs": 70,
+      "simulated": true
+    },
+    {
+      "event": "onLanguageModelChatProvider:muse",
+      "extension": "flauz-models.muse",
+      "activationMs": 60,
+      "simulated": true
+    },
+    {
+      "event": "onLanguageModelChatProvider:copilot",
+      "extension": "github.copilot-chat",
+      "activationMs": 130,
+      "simulated": true
+    },
+    {
+      "event": "onLanguageModelChatProvider:ollama",
+      "extension": "flauz-models.ollama",
+      "activationMs": 50,
+      "simulated": true
+    }
+  ]
+}
