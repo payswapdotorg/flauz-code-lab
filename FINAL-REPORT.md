@@ -94,3 +94,33 @@ Wave roadmap: **Wave 3** vertical slice (own chat participant on vscode.lm + aff
 ---
 
 **Bottom line**: Flauz-on-Code-OSS is not a fork story; it is an integration-and-product story on an agent-native base that already ships the browser, MCP, model fabric, and agent-host engines. The Flauz delta is orchestration, workspace state, evidence, policy, and distribution — all buildable in additive paths with a FORK-CRITICAL ledger at zero. Wave 3's vertical slice is the recommended first build.
+
+---
+
+# Wave 3 Addendum — The First Product Code (2026-09-25/26)
+
+**Basis**: 3 product-code lanes (F: Agent Bridge; G: workspace/evidence; H: CI harness), all delivered with sha256-verified transit and adjudicated (DECISION-LOG.md now DL-1..DL-28). Code branches on the pristine mirror payswapdotorg/Flauz: `wave3/f-agent-bridge` (8bbc49d), `wave3/g-workspace-evidence` (26474ff), `wave3/h-perf-ci` (52ec6dd) — base `9bf9ae764da`, FORK-CRITICAL ledger EMPTY on all three (TL re-verified from the harvested git bundles against the local mirror). Delivery records in flauz-code-lab: `wave3/f-agent-bridge`, `wave3/g-workspace-evidence`, `wave3/h-perf-ci`.
+
+## What now exists (the vertical slice, proven in-sandbox)
+
+1. **The Agent Bridge** (extensions/flauz-agent, 26 files): the `flauz.agent` chat participant (stable `chat.createChatParticipant`) with the statically-contributed `isDefault` identity; the `flauz_terminal` tool whose `prepareInvocation → confirmationMessages` is exactly the WaitingForConfirmation HumanApproval gate (agentSessionApprovalModel.ts:120-158 semantics); the golden-path orchestrator (request → createTask → submit-plan → human approve → tool-run → evidence → report → verify-pass → human sign-off → done); model selection via `lm.selectChatModels` with vendor preference; the zero-dep Flauz Core service (stdio JSONL handshake). 26 tests green incl. the full end-to-end golden path against the real spawned service.
+2. **The vendor pack** (extensions/flauz-models, 19 files): `flauz-mock`, a deterministic streaming echo provider on the STABLE `registerLanguageModelChatProvider` API (the CI golden-path model — no entitlements), plus frozen design-only Codex/Claude/Qwen stubs with pricing envelopes. 12 tests green.
+3. **The workspace layer** (extensions/flauz-workspace, 22 files): the `.flauz/` state envelope (flauz.tasks/v0, 9 actor-gated transitions, canonical git-diffable serialization, atomic writes), the hash-chained evidence ledger (sha256 row chain, verifyLedger with firstBadSeq across 5 tamper classes), the SCM artifact provider on the proposed `scmArtifactProvider` surface (4 kind groups → artifacts → openEvidence), chatEditing checkpoint interop with the attested/blocked decision matrix. 55 tests green.
+4. **The product identity** (product.flauz.json + build/flauz, 6 files): the v0 overlay (nameShort/nameLong/version + extensionEnabledApiProposals grants + defaultChatAgent:null deletion) and the zero-dep merger with null-deletes semantics — the mechanism that makes `flauz.agent` the sole default agent and disables the Copilot entitlement machinery. Merger spot-checked: 47 merged top-level keys, no defaultChatAgent, correct proposal grants.
+5. **The CI harness** (.github/workflows/flauz-* + build/flauz/scripts + 52-file fixture corpus): five jobs (upstream hygiene + FORK-CRITICAL guard; startup perf pair with §1.3 delta gates + mark-pair integrity; memory snapshot vs §3.2; DL-11 sync canaries C-20/23/24/28; proposed-API rota), all zero-dep, all fixture-proven (29/29 matrix incl. every gate's FAILURE mode; guard FAIL proven on a throwaway divergence commit).
+
+**Golden path, twice-proven**: the same §4 seam contract was implemented independently by lanes F and G and converged (DL-21 canonizes the seven shared interpretations). That convergence — plus tsc x3, node --test 43+55+5, FORK-CRITICAL 56+22+69 all-A — is the wave's verification story.
+
+## The operational story (recorded for the record)
+
+Wave 3 executed through a hostile platform window: the SyntaxError generation-queue region block (cleared by routing browser egress through the operator's TurboVPN per the boot-prompt lesson), a platform re-image at 17:39:54Z that wiped both executing worker sandboxes (only /home/z/my-project persists across pod recycles — both lanes rebuilt from their surviving worklogs with zero design drift, under a new persisted-volume + milestone-cadence transit discipline), and a MODEL_CONCURRENCY_LIMIT capacity crunch handled on a disciplined retry cadence. Recovery cost ~4.5 hours; the milestone-transit discipline means a pod reset can never again cost more than one milestone.
+
+## What Wave 3 deliberately leaves open (the Wave-4 door)
+
+- Real-IDE boots, real CI runners (MIGRATION-PLAN §5): all canary/spec surfaces carry explicit first-run procedures; H's workflows trigger on first push of the integration branch.
+- Signatures + ledger watermark (DL-20 Wave-4 hook per SECURITY-MODEL §3.3).
+- chatEditing out-of-band snapshot API (DL-22, deferred with the blocked-path contract).
+- Packaging (dist/ esbuild bundle for the bridge), real vendor adapters, model-driven plan generation (F GAPS 1-8; H GAPS 1-6).
+- §8 measurement closure (absolute baselines, AHP prewarm contribution, pinned ext-host RSS, browser-tool cold/warm) — H's measure-§8.md maps each to its exact CI job.
+
+**The roadmap position**: Waves 1-2 answered "what is Flauz on Code OSS" (investigation, DL-1..15). Wave 3 answered "can the vertical slice be built additively, verified in-sandbox, and kept fork-free" — yes: 147 new-path files across three branches, zero upstream files touched, the FORK-CRITICAL ledger empty. The next wave is integration (flauz/main assembly, first real CI run, first real boot) — everything it needs is now staged and pinned.
