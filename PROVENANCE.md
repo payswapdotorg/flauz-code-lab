@@ -1,7 +1,6 @@
-# Wave 1 / Worker A delivery provenance
+# Wave 1 / Worker C delivery provenance
 
-- Worker session: flauz-A4-w1 (chat.z.ai agents-tab, GLM-5.3 + Full-Stack), chat 9b2885f5-7ecc-4c9d-944a-ae141d9f4cf7, dispatched by TL#2.
-- Original work: branch wave1/a-architecture (8 commits) in the worker sandbox at /home/z/code-lab @ c81b44e (per worker report; git transit blocked — the platform redacts push tokens from prompts).
-- Transit: worker re-emitted all 14 deliverable files through the chat transcript (headers `FILE: <path>`); TL reconstructed byte-faithful content from the transcript extraction (dense DOM sweep + report quotes) at the integration station and committed it here.
-- Evidence: raw transcript extractions archived by the TL at replay2/scripts/worker-reports/flauz-A4-w1-full-*.txt.
-- Fidelity caveat: reconstruction is from the rendered transcript; fenced-code whitespace may differ cosmetically from the sandbox originals. The worker's own sha256 MANIFEST could not be carried across (sandbox unreachable via API). Content authority: the worker's chat 9b2885f5.
+- Worker session: flauz-C2-w1 (chat.z.ai agents-tab, GLM-5.3 + Full-Stack), chat 85334ca8-a0d0-40f8-b008-2b36c32e30f4, dispatched by TL#2 (2nd C attempt after the first died at the 60-min bound mid-clone).
+- Original work: branch wave1/c-capability-matrix (4 local commits @ 3c18c29f) in the worker sandbox at /home/z/work/flauz-code-lab. Git push blocked (platform redacts tokens from worker prompts).
+- Transit: worker's staging turn executed server-side at 22:46 UTC (the DOM render wedged — lesson 19b; the reply never rendered but the file copy happened). TL discovered the staged tree via the workspaces git/log (new rev dbeb10d1) + files/archive endpoint (gzip tar, 490KB) — extracted and sha256-verified 17/17 against the worker's MANIFEST.txt (byte-for-byte).
+- Worker report headline: Code OSS @ 9bf9ae764da is already agent-native — Agent Host Platform (Claude/Codex providers, subagents, steering, changesets, automations, cloud sandboxes), MCP core subsystem, CDP browser with 14 agent tools, chat-editing checkpoints, agents/prompts-as-files. Flauz's build is the orchestration/distribution layer on top, not a fork: 50 capabilities — 27 AVAILABLE / 13 INTEGRABLE / 5 PROTOTYPABLE / 3 REQUIRES CORE FORK (all conditional) / 2 BLOCKED.

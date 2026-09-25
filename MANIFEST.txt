@@ -1,0 +1,17 @@
+87e8f5302113c9c9d3a0a22c790a034d01ea92cb3476259f3a7bc1ada872d3ae  README.md
+88309effc832ac6fe54b9d5106eac27a09d6cc096a5b75517c9fdd0a7b6df6a8  docs/CODE-OSS-INTEGRATION-MATRIX.md
+98a18cb9c4ddc91e56f30766d90a17887088682abf7f7478e1406b97b31b5880  docs/DECISION-LOG-INPUTS.md
+941c23c4b9eea6932ecedd0bd05bb41a86cf6563282118e09ca08e19b9656a6c  evidence/c-capability-matrix/EV-00-orientation.md
+c5f1405c91089a4c1405a5fe8d26a7bff8f90e91123921acc09eeb7e30e75a8a  evidence/c-capability-matrix/EV-01-models-lm.md
+ba0e250e813f6a3bfb16cb2e8123705c4c194089b3d5a31f41eca9b1c7c183bf  evidence/c-capability-matrix/EV-02-agent-host.md
+4fb76ab9fd04bd4166a6bcd691a4a4397ae6c8c52d6e5b58115ebbd044a5afee  evidence/c-capability-matrix/EV-03-mcp-tools-approval.md
+2ca4781b92d5a2e510aafc92d8e4c9427460ec183aa0f6ac28bb63f5aba93e07  evidence/c-capability-matrix/EV-04-browser.md
+a218d2bb3e8fd6f8197bae0f3c1b94ff3ad45a98e89bee37c654e1328b926335  evidence/c-capability-matrix/EV-05-terminal-tasks-debug.md
+9dba4ef7a1f618ea958b6548d82eecb70ff1d34fd9a03b43a0ae82cd3491b26e  evidence/c-capability-matrix/EV-06-scm-git.md
+7f24343736606347d886824c5a056157d2cc8430ec9fdc0e4042ccc6fb573fa9  evidence/c-capability-matrix/EV-07-remote-environments.md
+7bdb9e11a89a365b19e7c03b1e0a4ddcee11fa5bb7601c6e8a321b47d446af26  evidence/c-capability-matrix/EV-08-persistence-state.md
+1c5c6d75a23916cde4e25b728fea2bbcae62885c5f981c05dbcb6ad92537e31e  evidence/c-capability-matrix/EV-09-workflow-reuse.md
+2e2864d8af9e4ecce51427a1902b0082d6e4d26c094bfea7d30951ec3fac6d8a  evidence/c-capability-matrix/EV-10-ecosystem-product.md
+07e4c20faef553ca2bdefe9d5d57f5de0afbdbf467a04239bcf3e27bb00767e6  evidence/c-capability-matrix/EV-11-negative-results.md
+92c9e6287dddd7478bac6178394cdb5a25509e574f2e3b3448c86ba18a957d34  evidence/c-capability-matrix/INDEX.md
+9ee76804829b3d9ea1499942dde7cf8a12bcdfd6e6bc08b6a8e6bf55a8da6722  worklog.md
