@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flauz target app (click-automation target)</title>
+<style>
+  body{margin:0;font:14px/1.5 system-ui;background:#101114;color:#e4e4e7;
+    display:grid;place-items:center;height:100vh}
+  .card{width:320px;padding:28px;background:#17171b;border:1px solid #27272a;border-radius:12px}
+  h1{font-size:16px;margin:0 0 6px}
+  p.sub{color:#8b8b93;margin:0 0 18px;font-size:12px}
+  input{width:100%;margin-bottom:10px;padding:9px 10px;background:#101114;color:#e4e4e7;
+    border:1px solid #27272a;border-radius:8px;font-size:13px}
+  #cta{margin-top:6px;width:100%;padding:11px 0;background:#fbbf24;color:#1c1917;font-weight:600;
+    border:0;border-radius:8px;font-size:13px;cursor:pointer}
+  #status{margin-top:14px;font:11.5px ui-monospace,monospace;color:#2dd4bf;min-height:16px}
+</style>
+</head>
+<body>
+  <!-- Agent clicks #cta at page coords ~(160,190). Fixed layout keeps coords stable. -->
+  <div class="card">
+    <h1>Acme Portal — sign in</h1>
+    <p class="sub">staging target for Flauz agent automation</p>
+    <input type="email" placeholder="you@acme.dev">
+    <input type="password" placeholder="password">
+    <button id="cta">Sign in</button>
+    <div id="status">waiting for agent…</div>
+  </div>
+<script>
+  window.__agentClicks = 0;
+  // The agent reads this via Runtime.evaluate, then clicks exactly here —
+  // the read-geometry-then-act loop a real agent uses.
+  window.__ctaCenter = (() => {
+    const b = document.getElementById('cta').getBoundingClientRect();
+    return { x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) };
+  })();
+  document.getElementById('cta').addEventListener('click', () => {
+    window.__agentClicks++;
+    const s = document.getElementById('status');
+    s.textContent = 'CLICKED BY AGENT ×' + window.__agentClicks + ' (CDP Input.dispatchMouseEvent)';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "method": "z-ai vision CLI (VLM) asked to describe the composites",
+  "q04_rightPane": "Yes. The right pane contains a dark card titled **\"Acme Portal — sign in\"** with an amber **\"Sign in\"** button and a teal status line reading **\"CLICKED BY AGENT x1 (CDP Input.dispatchEvent)\"**. The window title bar text is **\"Flauz\"**.",
+  "q07_layout": "**Left Half:**\n*   **Browser Pane:** Contains a **sign-in web page** for \"Acme Portal\" (with email/password fields and a \"Sign in\" button).\n\n**Right Half:**\n*   **Top Pane (Editor Surface):** Contains **editor code** (`page.tsx` with React/TypeScript code).\n*   **Bottom Pane (Terminal):** Contains a **terminal** showing test output and a command prompt.",
+  "note": "04 right-pane shows the agent-clicked test page (expected: pane had navigated past example.com); 07 shows browser pane moved left after layout toggle"
+}

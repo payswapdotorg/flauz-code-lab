@@ -1,0 +1,55 @@
+[4937:0925/011156.939371:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4937:0925/011156.939636:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011157.008687:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4937:0925/011157.008712:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[+0.05s] [boot] Electron 44.4.5 / Chromium 152.0.7977.130 / Node 24.21.0
+[+0.05s] [session] created partitions persist:ws-acme, persist:ws-beta (per-workspace cookie jars)
+[4937:0925/011157.035396:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011157.048338:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4937:0925/011157.048419:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011157.068821:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[+0.14s] [workbench] workbench.html loaded (Code-OSS-like shell: editor + terminal + reserved browser-pane region)
+[+0.14s] [workbench] browser pane region reported by DOM: x=727 y=89 w=662 h=781
+[+0.21s] [pane-A] loaded https://example.com (real Chromium renderer, pid=4999)
+[+0.21s] [pane-A] separate OS process from workbench renderer (workbench pid=4982) — process isolation demonstrated
+[+0.61s] [cdp] attached to pane-A via webContents.debugger (in-process CDP — the agent control path)
+[+0.62s] [cdp] Runtime.evaluate document.title -> "Example Domain"
+[4937:0925/011157.586519:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011157.586566:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4937:0925/011157.586594:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011157.586669:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[+0.66s] [artifact] wrote 01-paneA-examplecom.png (16 KB)
+[+0.66s] [isolation] ws-acme pane sees cookie: "flauz_ws=acme" (set via CDP Network.setCookie)
+[+1.00s] [isolation] ws-beta pane sees cookie: "" -> ISOLATED (empty jar in ws-beta)
+[+1.00s] [isolation] session API cross-check: ws-acme jar=["flauz_ws=acme"] ws-beta jar=[]
+[+1.80s] [warn] capturePage on viewB failed (Current display surface not available for capture) — trying CDP paneShot
+[4937:0925/011158.774231:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011158.774312:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4937:0925/011158.774353:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011158.774385:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[+21.80s] [warn] paneShot 02-paneB-examplecom-isolated-session.png failed: timeout: CDP Page.captureScreenshot (20000ms)
+[+21.80s] [security] allowlist for pane: [example.com, example.com., localhost, 127.0.0.1] — attempting CDP navigation to https://example.org/
+[+21.81s] [security] ws-acme: webRequest BLOCKED https://example.org/ (host 'example.org' not allowlisted) — covers CDP-initiated navigations
+(node:4937) electron: Failed to load URL: https://example.org/ with error: ERR_BLOCKED_BY_CLIENT
+(Use `electron --trace-warnings ...` to show where the warning was created)
+[+23.32s] [security] post-attempt pane URL: https://example.org/ — FINDING: webRequest CANCELLED the network request (no content fetched), but CDP Page.navigate still commits the URL. Airtight gate = webRequest (content) + driver-side navigate allowlist (URL commit) + will-navigate (user-initiated navs only; CDP bypasses it)
+[+23.36s] [security] allowlisted navigation ok, pane URL: https://example.com/
+[+23.82s] [agent-control] read #cta center from DOM via Runtime.evaluate -> (331, 457)
+[+24.12s] [agent-control] Input.dispatchMouseEvent @ (331,457) on #cta: agentClicks 0 -> 1 (CLICK LANDED ✓)
+[4937:0925/011221.092637:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011221.092669:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4937:0925/011221.092695:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011221.092705:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[+24.18s] [artifact] wrote 03-paneA-agent-click-landed.png (18 KB)
+[+24.74s] [artifact] wrote 04-composited-workbench-browserpane.png (86 KB)
+[+24.74s] [composite] desktopCapturer captured the X screen: workbench DOM + native WebContentsView composited together
+[+24.79s] [artifact] wrote 05-workbench-dom-underneath.png (91 KB)
+[4937:0925/011221.763986:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011221.764043:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4937:0925/011221.764087:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4937:0925/011221.764249:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[+24.82s] [artifact] wrote 06-paneA-content.png (18 KB)
+[+25.07s] [overlay-sync] workbench layout toggled — new pane region: x=59 y=89
+[+25.63s] [artifact] wrote 07-composited-after-layout-toggle.png (87 KB)
+[+25.63s] [overlay-sync] native pane followed the DOM region — the mechanism a real workbench would drive on layout/resize/scroll
+[+25.63s] [done] manifest + artifacts written to /home/z/flauz/lab/prototypes/browser/electron-webcontentsview/out — DEMO COMPLETE

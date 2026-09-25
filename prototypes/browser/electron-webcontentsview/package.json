@@ -1,0 +1,13 @@
+{
+  "name": "flauz-browser-pane-electron",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flauz Wave1-B: Electron WebContentsView as a real browser pane inside a Code-OSS-like workbench window",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^44.4.5"
+  }
+}

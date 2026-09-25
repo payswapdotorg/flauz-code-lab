@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "electron": "44.4.5",
+  "chromium": "152.0.7977.130",
+  "os": "Linux 5.10.134-013.15.kangaroo.al8.x86_64",
+  "steps": [
+    "[+0.05s] [boot] Electron 44.4.5 / Chromium 152.0.7977.130 / Node 24.21.0",
+    "[+0.05s] [session] created partitions persist:ws-acme, persist:ws-beta (per-workspace cookie jars)",
+    "[+0.14s] [workbench] workbench.html loaded (Code-OSS-like shell: editor + terminal + reserved browser-pane region)",
+    "[+0.14s] [workbench] browser pane region reported by DOM: x=727 y=89 w=662 h=781",
+    "[+0.21s] [pane-A] loaded https://example.com (real Chromium renderer, pid=4999)",
+    "[+0.21s] [pane-A] separate OS process from workbench renderer (workbench pid=4982) — process isolation demonstrated",
+    "[+0.61s] [cdp] attached to pane-A via webContents.debugger (in-process CDP — the agent control path)",
+    "[+0.62s] [cdp] Runtime.evaluate document.title -> \"Example Domain\"",
+    "[+0.66s] [artifact] wrote 01-paneA-examplecom.png (16 KB)",
+    "[+0.66s] [isolation] ws-acme pane sees cookie: \"flauz_ws=acme\" (set via CDP Network.setCookie)",
+    "[+1.00s] [isolation] ws-beta pane sees cookie: \"\" -> ISOLATED (empty jar in ws-beta)",
+    "[+1.00s] [isolation] session API cross-check: ws-acme jar=[\"flauz_ws=acme\"] ws-beta jar=[]",
+    "[+1.80s] [warn] capturePage on viewB failed (Current display surface not available for capture) — trying CDP paneShot",
+    "[+21.80s] [warn] paneShot 02-paneB-examplecom-isolated-session.png failed: timeout: CDP Page.captureScreenshot (20000ms)",
+    "[+21.80s] [security] allowlist for pane: [example.com, example.com., localhost, 127.0.0.1] — attempting CDP navigation to https://example.org/",
+    "[+21.81s] [security] ws-acme: webRequest BLOCKED https://example.org/ (host 'example.org' not allowlisted) — covers CDP-initiated navigations",
+    "[+23.32s] [security] post-attempt pane URL: https://example.org/ — FINDING: webRequest CANCELLED the network request (no content fetched), but CDP Page.navigate still commits the URL. Airtight gate = webRequest (content) + driver-side navigate allowlist (URL commit) + will-navigate (user-initiated navs only; CDP bypasses it)",
+    "[+23.36s] [security] allowlisted navigation ok, pane URL: https://example.com/",
+    "[+23.82s] [agent-control] read #cta center from DOM via Runtime.evaluate -> (331, 457)",
+    "[+24.12s] [agent-control] Input.dispatchMouseEvent @ (331,457) on #cta: agentClicks 0 -> 1 (CLICK LANDED ✓)",
+    "[+24.18s] [artifact] wrote 03-paneA-agent-click-landed.png (18 KB)",
+    "[+24.74s] [artifact] wrote 04-composited-workbench-browserpane.png (86 KB)",
+    "[+24.74s] [composite] desktopCapturer captured the X screen: workbench DOM + native WebContentsView composited together",
+    "[+24.79s] [artifact] wrote 05-workbench-dom-underneath.png (91 KB)",
+    "[+24.82s] [artifact] wrote 06-paneA-content.png (18 KB)",
+    "[+25.07s] [overlay-sync] workbench layout toggled — new pane region: x=59 y=89",
+    "[+25.63s] [artifact] wrote 07-composited-after-layout-toggle.png (87 KB)",
+    "[+25.63s] [overlay-sync] native pane followed the DOM region — the mechanism a real workbench would drive on layout/resize/scroll"
+  ],
+  "isolation": {
+    "wsAcmeCookie": "flauz_ws=acme",
+    "wsBetaCookie": "",
+    "isolated": true
+  },
+  "agentClick": {
+    "before": 0,
+    "after": 1,
+    "landed": true
+  }
+}

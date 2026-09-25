@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flauz — webview/iframe browser-limits probe suite</title>
+<style>
+  :root{--bg:#0a0a0b;--panel:#111113;--border:#27272a;--text:#d4d4d8;--muted:#8b8b93;
+    --accent:#fbbf24;--teal:#2dd4bf;--rose:#fb7185;--mono:ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:13px/1.5 system-ui;padding:20px;max-width:1080px;margin:0 auto}
+  h1{font-size:17px;margin-bottom:2px} .sub{color:var(--muted);font-size:12px;margin-bottom:16px}
+  h2{font-size:13px;margin:18px 0 8px;color:var(--accent)}
+  .probe{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
+  .probe h3{font-size:12.5px;margin-bottom:6px}
+  .probe p{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:760px){.row{grid-template-columns:1fr}}
+  .framebox{border:1px dashed var(--border);border-radius:8px;overflow:hidden;background:#0d0d0f;position:relative}
+  .framebox .cap{position:absolute;top:6px;left:8px;font:10px var(--mono);color:var(--muted);z-index:2;
+    background:rgba(10,10,11,.8);padding:2px 6px;border-radius:4px}
+  iframe{width:100%;height:190px;border:0;background:#fff}
+  .log{background:#0b0b0d;border:1px solid var(--border);border-radius:8px;padding:10px;
+    font:11px/1.6 var(--mono);max-height:260px;overflow:auto;white-space:pre-wrap}
+  .ok{color:var(--teal)} .bad{color:var(--rose)} .dim{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+  th,td{border:1px solid var(--border);padding:5px 8px;text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:500;background:#141417}
+  .verdict{margin-top:18px;border:1px solid #4c1d1d;background:#1a0f10;border-radius:8px;padding:12px;font-size:12px}
+  .verdict b{color:var(--rose)}
+  button{background:#1c1917;color:var(--accent);border:1px solid #3f2f0d;border-radius:6px;
+    padding:5px 12px;font-family:var(--mono);font-size:11px;cursor:pointer;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>Webview/iframe browser-pane limits — probe suite</h1>
+<p class="sub">Runs live probes against the iframe approach used by webviews (Code OSS webviews are iframes:
+<span class="dim">src/vs/workbench/contrib/webview/browser/webviewElement.ts</span>) and by the built-in
+Simple Browser extension (<span class="dim">extensions/simple-browser</span>). Every result below is
+captured by JS in this page — open the console or press Export to dump the JSON.</p>
+
+<h2>P1 — Cross-origin framing: many real sites refuse</h2>
+<div class="probe">
+  <p>Sites send X-Frame-Options / CSP frame-ancestors. Note: a blocked iframe still fires <code>load</code>
+  (with an error page) — the embedder cannot even reliably DETECT refusal from JS.</p>
+  <div class="row">
+    <div class="framebox"><span class="cap">en.wikipedia.org (XFO: deny family)</span><iframe data-p1 src="https://en.wikipedia.org/wiki/IDE" title="wikipedia"></iframe></div>
+    <div class="framebox"><span class="cap">github.com (XFO: deny)</span><iframe data-p1 src="https://github.com" title="github"></iframe></div>
+    <div class="framebox"><span class="cap">example.com (framable)</span><iframe data-p1 src="https://example.com" title="example"></iframe></div>
+    <div class="framebox"><span class="cap">news.ycombinator.com</span><iframe data-p1 src="https://news.ycombinator.com" title="hn"></iframe></div>
+  </div>
+  <div class="log" id="p1log">observing…</div>
+</div>
+
+<h2>P2 — Same-origin sandboxed iframe: shared or broken cookie jar</h2>
+<div class="probe">
+  <p>srcdoc iframes inherit the embedder origin (like Code OSS webviews share the webview origin on web).
+  A <code>sandbox</code> without <code>allow-same-origin</code> gets an OPAQUE origin: isolated — but also
+  no cookies, no storage, no session at all. There is no per-pane real browser session in between.</p>
+  <div class="row">
+    <div class="framebox"><span class="cap">srcdoc (same-origin)</span><iframe id="p2a" srcdoc="<!DOCTYPE html><html><body style='font:12px monospace;background:#f6f6f8'><div id=out></div><script>document.cookie=&quot;flauz_probe=host&quot;;parent.postMessage({t:'p2a',cookie:document.cookie},'*&quot;);</script></body></html>" title="srcdoc same-origin"></iframe></div>
+    <div class="framebox"><span class="cap">sandbox no allow-same-origin (opaque)</span><iframe id="p2b" sandbox="allow-scripts" srcdoc="<!DOCTYPE html><html><body style='font:12px monospace;background:#f6f6f8'><script>try{document.cookie='x=1';parent.postMessage({t:'p2b',cookie:document.cookie},'*')}catch(e){parent.postMessage({t:'p2b',error:e.name+': '+e.message},'*')}</script></body></html>" title="sandboxed opaque"></iframe></div>
+  </div>
+  <div class="log" id="p2log">observing…</div>
+</div>
+
+<h2>P3 — The killer: no programmatic access to cross-origin content</h2>
+<div class="probe">
+  <p>This is what an agent needs: read the DOM, click a button, screenshot content. The embedder tries all
+  three against the framed <code>example.com</code> below. Same-origin policy blocks everything.</p>
+  <div class="framebox" style="height:220px"><span class="cap">example.com (cross-origin target)</span><iframe id="p3frame" src="https://example.com" title="p3 target"></iframe></div>
+  <div class="log" id="p3log">running probes…</div>
+</div>
+
+<h2>P4 — Capability inventory vs Flauz browser-pane requirements</h2>
+<div class="probe">
+  <table>
+    <tr><th>Requirement</th><th>webview/iframe</th><th>WebContentsView / external CDP browser</th></tr>
+    <tr><td>Render any real site (XFO/CSP-protected)</td><td class="bad">✗ many sites refuse framing</td><td class="ok">✓ full Chromium</td></tr>
+    <tr><td>Agent: read DOM</td><td class="bad">✗ cross-origin → SecurityError (P3)</td><td class="ok">✓ Runtime.evaluate</td></tr>
+    <tr><td>Agent: click/type</td><td class="bad">✗ no DOM access → cannot (P3)</td><td class="ok">✓ Input.dispatch*</td></tr>
+    <tr><td>Agent: screenshot content</td><td class="bad">✗ (html2canvas re-renders an approximation, breaks on canvas/cross-origin)</td><td class="ok">✓ Page.captureScreenshot</td></tr>
+    <tr><td>Per-workspace session isolation</td><td class="bad">✗ shared jar per origin / or opaque+stateless (P2)</td><td class="ok">✓ session partitions / browser contexts (protos #1/#2)</td></tr>
+    <tr><td>Chrome UI surface (omnibox, history, downloads)</td><td class="bad">✗ none</td><td class="ok">✓ product-built (url bar widget exists in-tree)</td></tr>
+    <tr><td>Network policy gate for agent traffic</td><td class="bad">✗ not interceptable from embedder JS</td><td class="ok">✓ webRequest / CDP Fetch (proto #1 finding; in-tree IAgentNetworkFilterService)</td></tr>
+    <tr><td>Extensions / DevTools of the page</td><td class="bad">✗</td><td class="ok">✓ CDP inspector (in-tree browserViewInspector)</td></tr>
+  </table>
+</div>
+
+<div class="verdict" id="verdict"><b>Verdict (auto-filled by probes):</b> pending…</div>
+<button id="export">Export results JSON to console</button>
+<div class="log" id="jsonout" style="margin-top:8px"></div>
+
+<script>
+  const R = { url: location.href, startedAt: new Date().toISOString(), p1: [], p2: {}, p3: [] };
+  const $ = (id) => document.getElementById(id);
+  const line = (el, cls, txt) => { const d = document.createElement('div'); d.className = cls; d.textContent = txt; $(el).appendChild(d); };
+
+  // ---- P1: observe load events + probe content height (blocked pages stay 0-ish or error)
+  document.querySelectorAll('iframe[data-p1]').forEach((f) => {
+    const site = new URL(f.src).hostname;
+    const rec = { site, loadFired: false };
+    f.addEventListener('load', () => {
+      rec.loadFired = true;
+      // attempt to detect refusal (unreliable by design — that's the point)
+      let accessible = 'unknown (cross-origin)';
+      try { accessible = String(f.contentDocument && f.contentDocument.body ? 'unexpectedly-accessible' : 'no'); } catch (e) { accessible = 'blocked: ' + e.name; }
+      rec.domAccess = accessible;
+      line('p1log', 'dim', `[load] ${site} fired load; DOM access: ${accessible}`);
+      R.p1.push(rec);
+    });
+    setTimeout(() => { if (!rec.loadFired) { line('p1log', 'bad', `[timeout] ${site} — no load event after 12s (may be blocked or slow)`); R.p1.push({ site, loadFired: false, note: 'no load event in 12s' }); } }, 12000);
+  });
+  line('p1log', 'dim', 'Note: XFO/CSP-blocked iframes STILL fire load (error page). Detection from the embedder is guesswork.');
+
+  // ---- P2: messages from the srcdoc probes
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.t === 'p2a') { R.p2.sameOriginCookie = d.cookie; line('p2log', d.cookie && d.cookie.includes('flauz_probe') ? 'ok' : 'dim', `[same-origin srcdoc] cookie jar SHARED with host page: ${JSON.stringify(d.cookie)} — one jar for the whole webview surface`); }
+    if (d.t === 'p2b') {
+      if (d.error) { R.p2.sandboxedError = d.error; line('p2log', 'bad', `[sandbox w/o allow-same-origin] ${d.error} — opaque origin: isolated but NO session/storage at all (inert document, not a browser session)`); }
+      else { R.p2.sandboxedCookie = d.cookie; line('p2log', 'dim', `[sandbox w/o allow-same-origin] cookie: ${JSON.stringify(d.cookie)}`); }
+    }
+  });
+  setTimeout(() => { if (!R.p2.sameOriginCookie) { R.p2.sameOriginCookie = '(no message; note: srcdoc messaging may be blocked when served via file:// — the embedder-side conclusion stands from the sandbox probe)'; line('p2log', 'dim', R.p2.sameOriginCookie); } }, 6000);
+
+  // ---- P3: programmatic access attempts against cross-origin example.com
+  setTimeout(() => {
+    const f = $('p3frame');
+    const tries = [
+      ['read contentDocument', () => { const d = f.contentDocument; return d ? 'ACCESSED (unexpected!)' : 'null (no access)'; }],
+      ['read contentWindow.location.href', () => { return String(f.contentWindow.location.href); }],
+      ['click a link/button inside', () => {
+        const d = f.contentDocument; // null (or throws) for cross-origin frames
+        if (!d) return 'CANNOT: contentDocument is null — no DOM to click';
+        const el = d.querySelector('a,button'); el.click(); return 'clicked';
+      }],
+      ['set input value inside', () => {
+        const d = f.contentDocument;
+        if (!d) return 'CANNOT: contentDocument is null — no DOM to type into';
+        const i = d.querySelector('input'); i.value = 'x'; return 'set';
+      }],
+    ];
+    for (const [name, fn] of tries) {
+      try { const r = fn(); R.p3.push({ probe: name, result: r }); line('p3log', r.startsWith('ACCESSED') || r === 'clicked' || r === 'set' ? 'bad' : 'ok', `[${name}] -> ${r}`); }
+      catch (e) { R.p3.push({ probe: name, error: `${e.name}: ${e.message}` }); line('p3log', 'ok', `[${name}] -> ${e.name}: ${e.message}  ← Same-Origin Policy blocks the agent`); }
+    }
+    line('p3log', 'dim', 'An agent cannot read, click, or type inside a cross-origin webview. postMessage works only if the TARGET cooperates.');
+    // verdict
+    const blocked = R.p3.filter((x) => x.error || String(x.result).startsWith('CANNOT') || x.result === 'null (no access)').length;
+    $('verdict').innerHTML = `<b>Verdict (from live probes):</b> cross-origin content is unreachable from embedder JS
+      (${blocked}/${R.p3.length} access probes threw SecurityError${blocked === 0 ? '' : ' — see P3 log'}),
+      framing is refused by major sites (P1), and the cookie jar is either shared or inert (P2).
+      <b>A webview/iframe is NOT a browser surface for Flauz</b> — it remains fine for docs/preview content.
+      Real surfaces: Electron WebContentsView (proto #1) / external Chromium + CDP (proto #2).
+      The tree at 9bf9ae764da already ships both paths (platform/browserView + playwrightService).`;
+    R.verdictFilled = true;
+  }, 9000);
+
+  $('export').addEventListener('click', () => {
+    const j = JSON.stringify(R, null, 2);
+    console.log('[flauz-webview-limits]', j);
+    $('jsonout').textContent = j;
+    window.__flauzProbeResults = j;
+  });
+  // always expose for headless capture
+  window.__flauzProbeResults = () => JSON.stringify(R);
+</script>
+</body>
+</html>

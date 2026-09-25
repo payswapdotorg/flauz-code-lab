@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "steps": [
+    "[+0.00s] [boot] chromium binary: /home/z/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome",
+    "[+0.46s] [launch] ws-acme: chromium Chrome/153.0.8010.12 pid=6401 on :9777",
+    "[+2.01s] [agent-control] read #cta center via Runtime.evaluate -> (640, 410)",
+    "[+2.32s] [agent-control] click via Input.dispatchMouseEvent: 0 -> 1 (CLICK LANDED ✓)",
+    "[+2.40s] [artifact] wrote 01-agent-click-landed.png (26 KB)",
+    "[+2.40s] [screencast] Page.startScreencast on — collecting frames while the page animates…",
+    "[+2.90s] [screencast] captured 10 frames -> prototypes/browser/cdp-bridge/frames/ (pane-mock.html replays them)",
+    "[+4.48s] [artifact] wrote 02-realweb-examplecom.png (16 KB)",
+    "[+7.50s] [artifact] wrote 03-realweb-hackernews.png (129 KB)",
+    "[+7.50s] [real-web] rendered real sites — titles: \"Example Domain\", \"Hacker News\"",
+    "[+8.72s] [isolation] ws-acme profile sees cookie: \"flauz_ws=acme\"",
+    "[+10.47s] [isolation] ephemeral context (Target.createBrowserContext) sees cookie: \"\" -> ISOLATED ✓",
+    "[+10.82s] [launch] ws-beta: chromium Chrome/153.0.8010.12 pid=6628 on :9778",
+    "[+12.61s] [isolation] ws-beta (separate process+profile) sees cookie: \"\" -> ISOLATED ✓",
+    "[+12.64s] [artifact] wrote 04-wsbeta-isolated.png (16 KB)",
+    "[+12.64s] [done] summary: {\"agentControl\":\"PROVEN\",\"sessionIsolation\":\"PROVEN (in-process contexts + separate profiles)\",\"screencastFrames\":\"PROVEN (10 frames)\",\"realWeb\":\"PROVEN (example.com + news.ycombinator.com)\"} — DEMO COMPLETE (PASS)"
+  ],
+  "agentClick": {
+    "before": 0,
+    "after": 1,
+    "landed": true
+  },
+  "screencastFrames": 10,
+  "ephemeralContext": {
+    "cookie": "",
+    "isolated": true
+  },
+  "crossProcess": {
+    "cookie": "",
+    "isolated": true
+  },
+  "summary": {
+    "agentControl": "PROVEN",
+    "sessionIsolation": "PROVEN (in-process contexts + separate profiles)",
+    "screencastFrames": "PROVEN (10 frames)",
+    "realWeb": "PROVEN (example.com + news.ycombinator.com)"
+  }
+}

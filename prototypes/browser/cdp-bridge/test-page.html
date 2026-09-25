@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flauz CDP target — animated</title>
+<style>
+  body{margin:0;font:14px/1.5 system-ui;background:#101114;color:#e4e4e7;height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+  .card{width:320px;padding:28px;background:#17171b;border:1px solid #27272a;border-radius:12px}
+  h1{font-size:16px;margin:0 0 6px}
+  p.sub{color:#8b8b93;margin:0 0 18px;font-size:12px}
+  input{width:100%;margin-bottom:10px;padding:9px 10px;background:#101114;color:#e4e4e7;
+    border:1px solid #27272a;border-radius:8px;font-size:13px}
+  #cta{margin-top:6px;width:100%;padding:11px 0;background:#fbbf24;color:#1c1917;font-weight:600;
+    border:0;border-radius:8px;font-size:13px;cursor:pointer}
+  #status{margin-top:14px;font:11.5px ui-monospace,monospace;color:#2dd4bf;min-height:16px}
+  /* animated strip: gives Page.startScreencast visibly different frames */
+  .strip{width:420px;height:26px;border-radius:13px;background:linear-gradient(90deg,#fbbf24,#2dd4bf,#f472b6);
+    animation:slide 2.4s ease-in-out infinite alternate}
+  @keyframes slide{from{transform:translateX(-120px) scaleX(.7)}to{transform:translateX(120px) scaleX(1.15)}}
+  #clock{font:12px ui-monospace,monospace;color:#8b8b93}
+</style>
+</head>
+<body>
+  <div class="strip"></div>
+  <div class="card">
+    <h1>Acme Portal — sign in</h1>
+    <p class="sub">staging target for Flauz agent automation (animated for screencast)</p>
+    <input type="email" placeholder="you@acme.dev">
+    <input type="password" placeholder="password">
+    <button id="cta">Sign in</button>
+    <div id="status">waiting for agent…</div>
+  </div>
+  <div id="clock">t=0ms</div>
+<script>
+  window.__agentClicks = 0;
+  window.__ctaCenter = (() => {
+    const b = document.getElementById('cta').getBoundingClientRect();
+    return { x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) };
+  })();
+  document.getElementById('cta').addEventListener('click', () => {
+    window.__agentClicks++;
+    document.getElementById('status').textContent =
+      'CLICKED BY AGENT ×' + window.__agentClicks + ' (CDP Input.dispatchMouseEvent)';
+  });
+  const t0 = performance.now();
+  setInterval(() => { document.getElementById('clock').textContent = `t=${Math.round(performance.now() - t0)}ms`; }, 90);
+</script>
+</body>
+</html>

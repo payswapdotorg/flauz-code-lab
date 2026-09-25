@@ -1,0 +1,51 @@
+{
+  "url": "file:///home/z/flauz/lab/prototypes/browser/webview-limits/index.html",
+  "startedAt": "2026-09-25T01:37:30.264Z",
+  "p1": [
+    {
+      "site": "example.com",
+      "loadFired": true,
+      "domAccess": "no"
+    },
+    {
+      "site": "news.ycombinator.com",
+      "loadFired": true,
+      "domAccess": "no"
+    },
+    {
+      "site": "github.com",
+      "loadFired": true,
+      "domAccess": "no"
+    },
+    {
+      "site": "en.wikipedia.org",
+      "loadFired": true,
+      "domAccess": "no"
+    }
+  ],
+  "p2": {
+    "sandboxedError": "SecurityError: Failed to set the 'cookie' property on 'Document': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+    "sameOriginCookie": "(no message; note: srcdoc messaging may be blocked when served via file:// — the embedder-side conclusion stands from the sandbox probe)"
+  },
+  "p3": [
+    {
+      "probe": "read contentDocument",
+      "result": "null (no access)"
+    },
+    {
+      "probe": "read contentWindow.location.href",
+      "error": "SecurityError: Failed to read a named property 'href' from 'Location': Blocked a frame with origin \"null\" from accessing a cross-origin frame."
+    },
+    {
+      "probe": "click a link/button inside",
+      "result": "CANNOT: contentDocument is null — no DOM to click"
+    },
+    {
+      "probe": "set input value inside",
+      "result": "CANNOT: contentDocument is null — no DOM to type into"
+    }
+  ],
+  "verdictFilled": true,
+  "captureNote": "Headless capture via file:// (see capture-probes.mjs): github.com and news.ycombinator.com showed refused-to-connect error pages live; en.wikipedia.org and example.com rendered in this context (framing refusals depend on per-site XFO/CSP + embedding context — the core claims: many major sites refuse, and blocked iframes still fire load so detection is guesswork). P2/P3 results are context-independent (Same-Origin Policy).",
+  "vlmScreenshotCheck": "z-ai vision verified webview-probes-screenshot.png: refused boxes=github.com+news.ycombinator.com, rendered=en.wikipedia.org+example.com, verdict box present, P3 log shows SecurityError + contentDocument null"
+}

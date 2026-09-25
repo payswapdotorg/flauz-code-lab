@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flauz Workbench — UX prototype (static)</title>
+<meta name="description" content="Flauz agent-surface UX/IA prototype — co-equal work surfaces, static fake data, no backend.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fbbf24' stroke-width='2'%3E%3Cpath d='M12 2.5 21.5 12 12 21.5 2.5 12z'/%3E%3Cpath d='M12 7l5 5-5 5-5-5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-view="tasks">
+
+<!-- ═══════════════ SVG sprite (inline icons only) ═══════════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 2.5 21.5 12 12 21.5 2.5 12z"/><path d="M12 7l5 5-5 5-5-5z"/></symbol>
+    <symbol id="i-files" viewBox="0 0 24 24"><path d="M9 3h6l4 4v12a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V4.5A1.5 1.5 0 0 1 6.5 3z"/><path d="M15 3v4h4"/><path d="M5 8H3.5A1.5 1.5 0 0 0 2 9.5V19a2 2 0 0 0 2 2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.4-4.4"/></symbol>
+    <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="7" cy="5.5" r="2"/><circle cx="7" cy="18.5" r="2"/><circle cx="17" cy="9" r="2"/><path d="M7 7.5v9"/><path d="M17 11c0 4-4.5 3.5-7 5.7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5 19 12 8 18.5z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="5" y="8.5" width="14" height="11" rx="3"/><path d="M12 4.5v4"/><circle cx="12" cy="3.8" r="1"/><circle cx="9.5" cy="13" r=".4"/><circle cx="14.5" cy="13" r=".4"/><path d="M9.5 16.5h5"/></symbol>
+    <symbol id="i-tasks" viewBox="0 0 24 24"><path d="M3.5 7l2 2 3-3"/><path d="M3.5 17l2 2 3-3"/><path d="M12 8h8.5"/><path d="M12 18h8.5"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/><path d="M8 7h.01M8 17h.01"/></symbol>
+    <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3.2l2-3h5.6l2 3H20v11H4z"/><circle cx="12" cy="13" r="3.4"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/></symbol>
+    <symbol id="i-term" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10l2.5 2L7 14"/><path d="M12 15h5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><ellipse cx="12" cy="12" rx="4" ry="8.5"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
+    <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.4 5.6"/><path d="M20 4.5V11h-6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6.5 3H14l4 4v13H6.5z"/><path d="M14 3v4h4"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5.5 3.5 19 9.7l-6 1.9-1.9 6z"/></symbol>
+    <symbol id="i-commit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4"/><path d="M3 12h5.6M15.4 12H21"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.4"/><path d="M5 17l5-5 3 3 3-3 3 3"/></symbol>
+    <symbol id="i-log" viewBox="0 0 24 24"><path d="M6.5 3H14l4 4v13H6.5z"/><path d="M14 3v4h4"/><path d="M9.5 12h5M9.5 16h5"/></symbol>
+    <symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="18.5" r="1.3"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21h6M12 17v4"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.2 4.2 0 0 1-.6-8.35A5.6 5.6 0 0 1 17.2 9 4.4 4.4 0 0 1 17 18.5z"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/></symbol>
+    <symbol id="i-max" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6.2 7.2V18l-3.6 2v-7.8z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 7.8v.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 21 20H3z"/><path d="M12 10.5v4M12 17.4v.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19.5 7"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 6.5h6l2 2h8v11H4z"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9z"/></symbol>
+  </defs>
+</svg>
+
+<div class="workbench" id="workbench">
+
+  <!-- ═══════════════ TOP BAR (44px) ═══════════════ -->
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="logo" aria-hidden="true"><svg class="ic-18"><use href="#i-logo"/></svg></span>
+      <span class="wordmark">Flauz</span>
+      <button class="chip" id="ws-chip" data-action="workspace-menu" aria-haspopup="menu" aria-label="Switch workspace">acme-portal <span class="chev">▾</span></button>
+    </div>
+    <div class="tb-center">
+      <button class="pal-pill" data-action="palette" aria-label="Open command palette">
+        <span class="kbd mono">⌘K</span>
+        <span class="pal-pill-txt">Search tasks, agents, commands…</span>
+      </button>
+    </div>
+    <div class="tb-right">
+      <div class="env-wrap">
+        <button class="chip env-chip" id="env-chip" data-action="env-menu" aria-haspopup="menu" aria-label="Select environment"
+          data-map="status bar item + quick pick (pattern: remote indicator) — src/vs/workbench/contrib/remote/browser/remoteIndicator.ts + src/vs/platform/quickinput/">
+          <span class="dot dot-amber" id="env-dot"></span><span id="env-name">Container</span><span class="chev">▾</span>
+        </button>
+      </div>
+      <label class="map-toggle" for="map-toggle" title="Pin Code OSS hosting map onto regions">
+        <span class="mt-label">Map to Code OSS</span>
+        <input type="checkbox" id="map-toggle">
+        <span class="mt-track" aria-hidden="true"></span>
+      </label>
+      <button class="btn ghost tb-btn" id="firstrun-btn" data-action="firstrun" aria-pressed="false">First run</button>
+      <button class="avatar" data-action="avatar-toast" aria-label="Account">Z</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════ BODY: rail + sidebar + main ═══════════════ -->
+  <div class="body">
+
+    <!-- Activity rail (46px) -->
+    <nav class="rail" aria-label="Activity bar">
+      <button class="rbtn" data-action="rail-baseline" data-name="Explorer" data-tip="Explorer" aria-label="Explorer"><svg class="ic-19"><use href="#i-files"/></svg></button>
+      <button class="rbtn" data-action="rail-baseline" data-name="Search" data-tip="Search" aria-label="Search"><svg class="ic-19"><use href="#i-search"/></svg></button>
+      <button class="rbtn" data-action="rail-baseline" data-name="Source Control" data-tip="Source Control" aria-label="Source Control"><svg class="ic-19"><use href="#i-branch"/></svg></button>
+      <button class="rbtn" data-action="rail-baseline" data-name="Run" data-tip="Run and Debug" aria-label="Run and Debug"><svg class="ic-19"><use href="#i-play"/></svg></button>
+      <div class="rdiv" role="separator"></div>
+      <button class="rbtn" data-action="rail" data-view="context" data-tip="Workspace · Context" aria-label="Workspace and context"><svg class="ic-19"><use href="#i-grid"/></svg></button>
+      <button class="rbtn" data-action="rail" data-view="agents" data-tip="Agents roster" aria-label="Agents roster"><svg class="ic-19"><use href="#i-bot"/></svg></button>
+      <button class="rbtn active" data-action="rail" data-view="tasks" data-tip="Tasks" aria-label="Tasks"><svg class="ic-19"><use href="#i-tasks"/></svg><span class="rbadge">2</span></button>
+      <button class="rbtn" data-action="rail" data-view="resources" data-tip="Resources" aria-label="Resources"><svg class="ic-19"><use href="#i-stack"/></svg></button>
+      <button class="rbtn" data-action="rail" data-view="evidence" data-tip="Evidence" aria-label="Evidence"><svg class="ic-19"><use href="#i-cam"/></svg></button>
+      <div class="rspacer"></div>
+      <button class="rbtn" data-action="toggle-sidebar" data-tip="Toggle sidebar (⌘B)" aria-label="Toggle sidebar"><svg class="ic-19"><use href="#i-panel"/></svg></button>
+    </nav>
+
+    <!-- Collapsible sidebar (~264px) -->
+    <aside class="sidebar" id="sidebar" data-map="view container in primary side bar — src/vs/workbench/browser/parts/activitybar/">
+      <div class="sb-inner">
+        <header class="sb-head">
+          <h2 id="sb-title">Tasks</h2>
+          <div class="sb-acts">
+            <button class="sact" data-for="tasks" data-action="focus-new-task" aria-label="New task"><svg class="ic-14"><use href="#i-plus"/></svg></button>
+            <button class="sact" data-for="context" data-action="ctx-info" aria-label="Workspace info"><svg class="ic-14"><use href="#i-info"/></svg></button>
+            <button class="sact" data-for="resources" data-action="res-refresh" aria-label="Rescan resources"><svg class="ic-14"><use href="#i-refresh"/></svg></button>
+            <button class="sact" data-for="evidence" data-action="ev-filter" aria-label="Filter evidence"><svg class="ic-14"><use href="#i-filter"/></svg></button>
+            <button class="sact" data-for="agents" data-action="spawn-agent" aria-label="Spawn agent"><svg class="ic-14"><use href="#i-plus"/></svg></button>
+          </div>
+        </header>
+
+        <div class="sb-body">
+
+          <!-- ── view: tasks ── -->
+          <section class="sview active" data-view="tasks" aria-label="Tasks">
+            <div class="tlist" id="task-list"></div>
+            <div class="empty-inline" id="tasks-empty" hidden>No tasks yet — create your first</div>
+            <div class="newtask">
+              <svg class="ic-13"><use href="#i-plus"/></svg>
+              <input id="new-task-input" placeholder="New task — title, then ⏎" aria-label="New task title" autocomplete="off">
+            </div>
+          </section>
+
+          <!-- ── view: workspace / context ── -->
+          <section class="sview" data-view="context" aria-label="Workspace and context">
+            <div class="card">
+              <div class="card-title">Active task</div>
+              <div class="card-big mono">#142 <span>Login hardening</span></div>
+              <div class="lbl">linked files</div>
+              <div class="chips">
+                <button class="fchip mono" data-action="open-file" data-file="page.tsx">src/app/page.tsx</button>
+                <button class="fchip mono" data-action="open-file" data-file="agent.ts">src/lib/agent.ts</button>
+                <button class="fchip mono" data-action="open-file" data-file="spec.md">spec.md</button>
+              </div>
+              <div class="lbl">selected snippet · you · 14:20</div>
+              <pre class="snip mono">if (attempts &gt;= 5)
+  return { error: "too_many_attempts", retryAfter: 60 };</pre>
+            </div>
+            <div class="card">
+              <div class="card-title">Environment context</div>
+              <div class="kv"><span>env</span><b class="mono" id="ctx-env">container · node-20</b></div>
+              <div class="kv"><span>runtime</span><b class="mono" id="ctx-runtime">devcontainer · node-20 · pnpm 9</b></div>
+              <div class="kv"><span>resources</span><b class="mono" id="ctx-res">2 vCPU · 4 GB · disk 18 GB free</b></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Agent memory</div>
+              <div class="mem">
+                <p>Login idles at ~3 req/min per IP — a 5-attempt cap is safe.</p>
+                <button class="fchip mono" data-action="evidence" data-ev="shot-01">shot-01.png</button>
+              </div>
+              <div class="mem">
+                <p>Staging deploy hook requires green e2e before any push.</p>
+                <button class="fchip mono" data-action="mem-file" data-file="README.md">README.md</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── view: resources ── -->
+          <section class="sview" data-view="resources" aria-label="Resources">
+            <div id="resource-list" class="demo-only"></div>
+            <div class="empty-inline fr-only">No resources attached — connect an environment first</div>
+          </section>
+
+          <!-- ── view: evidence ── -->
+          <section class="sview" data-view="evidence" aria-label="Evidence">
+            <div class="demo-only evid-list">
+              <button class="erow" data-action="evidence" data-ev="shot-01">
+                <svg class="ic-15"><use href="#i-image"/></svg>
+                <span class="er-main"><span class="er-name">shot-01.png</span><span class="er-prov mono">browser.screenshot · Agent A · 14:31</span></span>
+              </button>
+              <button class="erow" data-action="evidence" data-ev="test-output">
+                <svg class="ic-15"><use href="#i-log"/></svg>
+                <span class="er-main"><span class="er-name">test-output.log</span><span class="er-prov mono">terminal.exec · Agent A · 14:33</span></span>
+              </button>
+              <button class="erow" data-action="evidence" data-ev="diff-staging">
+                <svg class="ic-15"><use href="#i-diff"/></svg>
+                <span class="er-main"><span class="er-name">diff-staging.patch</span><span class="er-prov mono">git · Agent A · 14:32</span></span>
+              </button>
+              <button class="erow" data-action="evidence" data-ev="baseline-login">
+                <svg class="ic-15"><use href="#i-image"/></svg>
+                <span class="er-main"><span class="er-name">baseline-login.png</span><span class="er-prov mono">human · attached · 13:58</span></span>
+              </button>
+            </div>
+            <div class="empty-inline fr-only">No evidence yet — agents attach artifacts as they work</div>
+          </section>
+
+          <!-- ── view: agents roster ── -->
+          <section class="sview" data-view="agents" aria-label="Agents roster">
+            <div class="demo-only acards">
+              <div class="acard">
+                <div class="ac-head">
+                  <span class="aava amber"><svg class="ic-15"><use href="#i-bot"/></svg></span>
+                  <span class="a-name">Agent A</span>
+                  <span class="chip-sm running"><span class="dot dot-amber pulse"></span>executing</span>
+                </div>
+                <div class="ac-task mono">#142 Login hardening</div>
+                <div class="ac-meta"><span class="fchip mono a-model-a">claude-4.5-sonnet</span><span class="ac-since mono">since 14:29</span></div>
+                <button class="btn ghost sm ac-open" data-action="open-agent" data-agent="a">open →</button>
+              </div>
+              <div class="acard">
+                <div class="ac-head">
+                  <span class="aava teal"><svg class="ic-15"><use href="#i-bot"/></svg></span>
+                  <span class="a-name">Agent B</span>
+                  <span class="chip-sm off"><span class="dot dot-zinc"></span>queued</span>
+                </div>
+                <div class="ac-task mono">#142 e2e tests (draft)</div>
+                <div class="ac-meta"><span class="fchip mono a-model-b">gpt-5.2</span><span class="ac-since mono">queued 14:30</span></div>
+                <button class="btn ghost sm ac-open" data-action="open-agent" data-agent="b">open →</button>
+              </div>
+              <button class="spawn" data-action="spawn-agent"><svg class="ic-14"><use href="#i-plus"/></svg> Spawn agent</button>
+            </div>
+            <div class="empty-inline fr-only">No agents yet — describe a goal to spawn one</div>
+          </section>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main surface grid -->
+    <main class="main">
+      <div class="narrow-note">workbench layout is desktop-class — surfaces stack below 1000px</div>
+
+      <div class="preset-row">
+        <button class="ppill" data-action="preset" data-preset="solo">Solo Code</button>
+        <button class="ppill active" data-action="preset" data-preset="agent-led">Agent-Led</button>
+        <button class="ppill" data-action="preset" data-preset="browser">Browser Test</button>
+        <button class="ppill" data-action="preset" data-preset="review">Review</button>
+        <span class="pr-note mono" id="preset-label">preset: agent-led · every surface is co-equal</span>
+      </div>
+
+      <div class="surface" id="surface" data-preset="agent-led">
+
+        <!-- ── EDITOR tile ── -->
+        <section class="tile" id="tile-editor" data-tile="editor"
+          data-map="editorPart grid · editor group — src/vs/workbench/browser/parts/editor/">
+          <header class="tile-head">
+            <svg class="ic-15"><use href="#i-code"/></svg>
+            <span class="tile-title">Editor</span>
+            <span class="mode-chip mono" id="editor-mode-chip" hidden>diff view · agent edits vs HEAD</span>
+            <div class="tile-spacer"></div>
+            <span class="tile-sub mono demo-only" id="editor-crumb">src/app › <b>page.tsx</b></span>
+            <button class="tmenu" data-action="tile-menu" data-tile="editor" aria-label="Editor tile options"><svg class="ic-16"><use href="#i-dots"/></svg></button>
+          </header>
+
+          <div class="etabs demo-only" role="tablist" aria-label="Open files">
+            <button class="etab active" role="tab" aria-selected="true" data-action="editor-tab" data-file="page.tsx">page.tsx <span class="edot" title="edited by Agent A"></span></button>
+            <button class="etab" role="tab" aria-selected="false" data-action="editor-tab" data-file="agent.ts">agent.ts</button>
+            <button class="etab" role="tab" aria-selected="false" data-action="editor-tab" data-file="spec.md">spec.md</button>
+          </div>
+
+          <div class="ebody demo-only">
+            <div class="ecode">
+
+              <!-- buffer: page.tsx -->
+              <div class="ebuf active mono" data-file="page.tsx">
+                <div class="elines">
+                  <div class="cl"><span class="ln">1</span><span class="lc"><span class="s">"use client"</span><span class="p">;</span></span></div>
+                  <div class="cl"><span class="ln">2</span><span class="lc"><span class="k">import</span> <span class="p">{</span> useState <span class="p">}</span> <span class="k">from</span> <span class="s">"react"</span><span class="p">;</span></span></div>
+                  <div class="cl"><span class="ln">3</span><span class="lc"><span class="k">import</span> <span class="p">{</span> loginUser<span class="p">,</span> RateLimitError <span class="p">}</span> <span class="k">from</span> <span class="s">"@/lib/agent"</span><span class="p">;</span></span></div>
+                  <div class="cl"><span class="ln">4</span><span class="lc"> </span></div>
+                  <div class="cl"><span class="ln">5</span><span class="lc"><span class="k">export function</span> <span class="f">LoginForm</span><span class="p">()</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">6</span><span class="lc">  <span class="k">const</span> <span class="p">[</span>email<span class="p">,</span> setEmail<span class="p">]</span> <span class="p">=</span> <span class="f">useState</span><span class="p">(</span><span class="s">""</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">7</span><span class="lc">  <span class="k">const</span> <span class="p">[</span>pending<span class="p">,</span> setPending<span class="p">]</span> <span class="p">=</span> <span class="f">useState</span><span class="p">(</span><span class="k">false</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">8</span><span class="lc">  <span class="k">const</span> <span class="p">[</span>error<span class="p">,</span> setError<span class="p">]</span> <span class="p">=</span> <span class="f">useState</span><span class="p">&lt;</span><span class="t">string</span> <span class="p">|</span> <span class="k">null</span><span class="p">&gt;(</span><span class="k">null</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">9</span><span class="lc"> </span></div>
+                  <div class="cl"><span class="ln">10</span><span class="lc">  <span class="k">async function</span> <span class="f">onSubmit</span><span class="p">(</span>e<span class="p">:</span> <span class="t">React.FormEvent</span><span class="p">)</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">11</span><span class="lc">    e<span class="p">.</span><span class="f">preventDefault</span><span class="p">();</span></span></div>
+                  <div class="cl"><span class="ln">12</span><span class="lc add">    <span class="k">if</span> <span class="p">(</span>pending<span class="p">)</span> <span class="k">return</span><span class="p">;</span> <span class="c">// lock double-submit while pending</span></span></div>
+                  <div class="cl"><span class="ln">13</span><span class="lc del">    <span class="f">setError</span><span class="p">(</span><span class="k">null</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">14</span><span class="lc add">    <span class="f">setError</span><span class="p">(</span><span class="f">rateLimited</span><span class="p">(</span>email<span class="p">)</span> <span class="p">?</span> <span class="s">"Too many attempts — retry in 60s"</span> <span class="p">:</span> <span class="k">null</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">15</span><span class="lc">    <span class="k">try</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">16</span><span class="lc">      <span class="k">await</span> <span class="f">loginUser</span><span class="p">({</span> email <span class="p">});</span></span></div>
+                  <div class="cl"><span class="ln">17</span><span class="lc">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span>err<span class="p">)</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">18</span><span class="lc">      <span class="k">if</span> <span class="p">(</span>err <span class="k">instanceof</span> <span class="t">RateLimitError</span><span class="p">)</span> <span class="f">setError</span><span class="p">(</span><span class="s">"Slow down — 60s lockout"</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">19</span><span class="lc">    <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">20</span><span class="lc">      <span class="f">setPending</span><span class="p">(</span><span class="k">false</span><span class="p">);</span></span></div>
+                  <div class="cl"><span class="ln">21</span><span class="lc">    <span class="p">}</span></span></div>
+                  <div class="cl"><span class="ln">22</span><span class="lc">  <span class="p">}</span></span></div>
+                  <div class="cl"><span class="ln">23</span><span class="lc"><span class="p">}</span></span></div>
+                  <button class="diff-chip mono" data-action="evidence" data-ev="diff-staging">edited by Agent A · 14:32 · view diff</button>
+                </div>
+              </div>
+
+              <!-- buffer: agent.ts -->
+              <div class="ebuf mono" data-file="agent.ts">
+                <div class="elines">
+                  <div class="cl"><span class="ln">1</span><span class="lc"><span class="k">import</span> <span class="p">{</span> verifyToken <span class="p">}</span> <span class="k">from</span> <span class="s">"./jwt"</span><span class="p">;</span></span></div>
+                  <div class="cl"><span class="ln">2</span><span class="lc"> </span></div>
+                  <div class="cl"><span class="ln">3</span><span class="lc"><span class="k">export async function</span> <span class="f">loginUser</span><span class="p">({</span> email <span class="p">}:</span> <span class="t">LoginInput</span><span class="p">)</span> <span class="p">{</span></span></div>
+                  <div class="cl"><span class="ln">4</span><span class="lc">  <span class="k">const</span> res <span class="p">=</span> <span class="k">await</span> <span class="f">fetch</span><span class="p">(</span><span class="s">"/api/auth/login"</span><span class="p">,</span> <span class="p">{{</span></span></div>
+                  <div class="cl"><span class="ln">5</span><span class="lc">    method<span class="p">:</span> <span class="s">"POST"</span><span class="p">,</span> body<span class="p">:</span> <span class="t">JSON</span><span class="p">.</span><span class="f">stringify</span><span class="p">({</span> email<span class="p">,</span> attempt<span class="p">:</span> <span class="f">countAttempts</span><span class="p">(</span>email<span class="p">)</span> <span class="p">}),</span></span></div>
+                  <div class="cl"><span class="ln">6</span><span class="lc">  <span class="p">});</span></span></div>
+                  <div class="cl"><span class="ln">7</span><span class="lc">  <span class="k">if</span> <span class="p">(</span>res<span class="p">.</span>status <span class="p">===</span> <span class="n">429</span><span class="p">)</span> <span class="k">throw new</span> <span class="f">RateLimitError</span><span class="p">(</span>res<span class="p">.</span>headers<span class="p">.</span><span class="f">get</span><span class="p">(</span><span class="s">"retry-after"</span><span class="p">));</span></span></div>
+                  <div class="cl"><span class="ln">8</span><span class="lc">  <span class="k">return</span> <span class="f">verifyToken</span><span class="p">(</span><span class="k">await</span> res<span class="p">.</span><span class="f">json</span><span class="p">());</span></span></div>
+                  <div class="cl"><span class="ln">9</span><span class="lc"><span class="p">}</span></span></div>
+                </div>
+              </div>
+
+              <!-- buffer: spec.md -->
+              <div class="ebuf mono" data-file="spec.md">
+                <div class="elines">
+                  <div class="cl"><span class="ln">1</span><span class="lc"><span class="k"># Login hardening — spec (task #142)</span></span></div>
+                  <div class="cl"><span class="ln">2</span><span class="lc"> </span></div>
+                  <div class="cl"><span class="ln">3</span><span class="lc"><span class="p">-</span> cap failed attempts at <span class="n">5</span> per <span class="n">15</span> min per IP</span></div>
+                  <div class="cl"><span class="ln">4</span><span class="lc"><span class="p">-</span> lock submit while the request is pending</span></div>
+                  <div class="cl"><span class="ln">5</span><span class="lc"><span class="p">-</span> match <span class="f">baseline-login.png</span> layout pixel-for-pixel</span></div>
+                  <div class="cl"><span class="ln">6</span><span class="lc"><span class="p">-</span> e2e: green before any staging push</span></div>
+                  <div class="cl"><span class="ln">7</span><span class="lc"> </span></div>
+                  <div class="cl"><span class="ln">8</span><span class="lc"><span class="c">&gt; owner: z · agent: A · env: staging container</span></span></div>
+                </div>
+              </div>
+
+            </div>
+            <div class="minimap" id="minimap" aria-hidden="true"></div>
+          </div>
+
+          <div class="empty fr-only">
+            <svg class="ic-26"><use href="#i-folder"/></svg>
+            <p>No folder open</p>
+            <button class="btn ghost" data-action="cta-open-folder">Open folder</button>
+          </div>
+        </section>
+
+        <!-- ── AGENT tile ── -->
+        <section class="tile" id="tile-agent" data-tile="agent"
+          data-map="AGENT (in-tree): chat view container in auxiliary bar + agent sessions — src/vs/workbench/contrib/chat/browser/chatParticipant.contribution.ts + agentSessions/ + src/vs/sessions/">
+          <header class="tile-head">
+            <svg class="ic-15"><use href="#i-chat"/></svg>
+            <span class="tile-title">Agent conversation</span>
+            <span class="agent-context mono" id="agent-context">context: container</span>
+            <div class="tile-spacer"></div>
+            <button class="amodel-btn mono" id="amodel-btn" data-action="model-menu" data-agent="" aria-haspopup="menu" aria-label="Model picker">
+              <span class="m-name" id="amodel-name">claude-4.5-sonnet</span><span class="chev">▾</span>
+            </button>
+            <button class="tmenu" data-action="tile-menu" data-tile="agent" aria-label="Agent tile options"><svg class="ic-16"><use href="#i-dots"/></svg></button>
+          </header>
+
+          <div class="agent-sub demo-only">
+            <div class="atabs" role="tablist" aria-label="Agents">
+              <button class="atab active" role="tab" aria-selected="true" data-action="agent-tab" data-agent="a">A · frontend refactor</button>
+              <button class="atab" role="tab" aria-selected="false" data-action="agent-tab" data-agent="b">B · e2e tests</button>
+            </div>
+            <div class="phases mono" id="phases-a">
+              <span class="phase ph-done">PLAN ✓</span><span class="ph-ar">→</span>
+              <span class="phase ph-live"><span class="ph-dot"></span>EXECUTE</span><span class="ph-ar">→</span>
+              <span class="phase ph-todo">VERIFY ○</span>
+            </div>
+            <div class="phases mono" id="phases-b" hidden>
+              <span class="phase ph-todo">PLAN ○</span><span class="ph-ar">→</span>
+              <span class="phase ph-todo">EXECUTE ○</span><span class="ph-ar">→</span>
+              <span class="phase ph-todo">VERIFY ○</span>
+            </div>
+          </div>
+
+          <!-- thread A -->
+          <div class="athread active demo-only" data-agent="a">
+            <div class="thread-wrap" id="thread-wrap-a">
+              <div class="thread" id="thread-a">
+                <div class="msg user">Harden the login flow on staging — cap failed attempts, lock the submit button while pending, and match the baseline screenshot.</div>
+                <div class="sysline mono">task #142 · spawned 14:29 · context container · claude-4.5-sonnet</div>
+
+                <div class="block plan">
+                  <div class="block-head"><span class="bh-tag">PLAN</span><span class="bh-state okc mono">3/3 steps</span></div>
+                  <div class="check done"><span class="cbox">✓</span><span>Read <code class="mono">src/app/page.tsx</code> + <code class="mono">src/lib/agent.ts</code></span></div>
+                  <div class="check done"><span class="cbox">✓</span><span>Apply rate-limit + pending-lock edits (+120 −8)</span></div>
+                  <div class="check done"><span class="cbox">✓</span><span>Verify against <code class="mono">baseline-login.png</code> on staging</span></div>
+                </div>
+
+                <div class="block">
+                  <div class="block-head"><span class="bh-tag">EXECUTE</span><span class="bh-state mono" id="exec-count">3 tool calls · 1 gate</span></div>
+                  <div id="tools-a">
+                    <div class="tool"><svg class="ic-14"><use href="#i-file"/></svg><code class="mono tstr">file.read src/app/page.tsx</code><span class="tstat ok mono">ok</span></div>
+                    <div class="tool"><svg class="ic-14"><use href="#i-globe"/></svg><code class="mono tstr">browser.navigate → https://staging.acme.dev/login</code><button class="evchip mono" data-action="evidence" data-ev="shot-01">shot-01.png</button><span class="tstat ok mono">ok · 1.2s</span></div>
+                    <div class="tool"><svg class="ic-14"><use href="#i-cursor"/></svg><code class="mono tstr">browser.click → button[type=submit]</code><button class="evchip mono" data-action="evidence" data-ev="shot-02">shot-02.png</button><span class="tstat ok mono">ok · 0.4s</span></div>
+                    <div class="gate" id="gate-a" data-gstate="pending">
+                      <div class="gate-head"><svg class="ic-14"><use href="#i-lock"/></svg><span>HUMAN APPROVAL — Agent A paused</span></div>
+                      <div class="gate-body">
+                        <p>Agent A requests <code class="mono">git push origin staging</code></p>
+                        <div class="gate-meta">
+                          <span class="chip-sm off">2 files</span>
+                          <span class="chip-sm ok">+120</span>
+                          <span class="chip-sm bad">−8</span>
+                          <span class="chip-sm warn">impact: staging deploy</span>
+                        </div>
+                      </div>
+                      <div class="gate-actions">
+                        <button class="btn solid-amber" data-action="approve">Approve</button>
+                        <button class="btn ghost" data-action="request-changes">Request changes</button>
+                        <button class="btn ghost" data-action="add-constraint">Add constraint</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="block" id="verify-a">
+                  <div class="block-head"><span class="bh-tag">VERIFY</span><span class="bh-state mono" id="verify-state">pending</span></div>
+                  <div class="asrt"><span class="amark">○</span><span>login flow matches baseline</span></div>
+                  <div class="asrt"><span class="amark">○</span><span>tests green</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="agent-input">
+              <input id="agent-msg" placeholder="Message Agent A… (⏎ send)" aria-label="Message Agent A" autocomplete="off">
+              <span class="kbd-hint mono">⏎ send</span>
+            </div>
+          </div>
+
+          <!-- thread B -->
+          <div class="athread demo-only" data-agent="b">
+            <div class="thread-wrap" id="thread-wrap-b">
+              <div class="thread" id="thread-b">
+                <div class="msg user">Write e2e tests for the login hardening — cover the rate-limit lockout and the pending submit button.</div>
+                <div class="sysline mono">task #142 · queued 14:30 · gpt-5.2</div>
+                <div class="msg agent">Queued behind Agent A — I start once the staging push is approved. Drafting selectors meanwhile: email input, submit button, error banner.</div>
+              </div>
+            </div>
+            <div class="agent-input">
+              <input id="agent-msg-b" placeholder="Message Agent B… (⏎ send)" aria-label="Message Agent B" autocomplete="off">
+              <span class="kbd-hint mono">⏎ send</span>
+            </div>
+          </div>
+
+          <div class="empty fr-only">
+            <svg class="ic-26"><use href="#i-sparkle"/></svg>
+            <p>Describe a goal to spawn your first agent</p>
+            <div class="cta-row">
+              <input id="cta-input" placeholder="e.g. Harden the login flow" aria-label="Describe a goal" autocomplete="off">
+            </div>
+            <div class="cta-chips">
+              <button class="fchip mono" data-action="cta-example" data-text="Harden the login flow">Harden the login flow</button>
+              <button class="fchip mono" data-action="cta-example" data-text="Write e2e tests">Write e2e tests</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── TERMINAL tile ── -->
+        <section class="tile" id="tile-terminal" data-tile="terminal"
+          data-map="TERMINAL: panel part OR editor-area terminal — src/vs/workbench/contrib/terminal/browser/terminalEditor.ts + agentHostTerminalService.ts">
+          <header class="tile-head">
+            <svg class="ic-15"><use href="#i-term"/></svg>
+            <span class="tile-title">Terminal</span>
+            <div class="tile-spacer"></div>
+            <button class="tnew" data-action="new-terminal" aria-label="New terminal"><svg class="ic-14"><use href="#i-plus"/></svg></button>
+            <button class="tmenu" data-action="tile-menu" data-tile="terminal" aria-label="Terminal tile options"><svg class="ic-16"><use href="#i-dots"/></svg></button>
+          </header>
+          <div class="ttabs demo-only" role="tablist" aria-label="Terminal sessions">
+            <button class="ttab active mono" role="tab" aria-selected="true" data-action="term-tab" data-tab="env" id="ttab-env">bash — container</button>
+            <button class="ttab mono" role="tab" aria-selected="false" data-action="term-tab" data-tab="local" id="ttab-local">bash — local</button>
+          </div>
+          <div class="term mono demo-only" id="term-body" tabindex="0" aria-label="Terminal output"></div>
+          <div class="empty fr-only">
+            <svg class="ic-26"><use href="#i-term"/></svg>
+            <p>No shells</p>
+            <button class="btn ghost" data-action="cta-create-terminal">Create terminal</button>
+          </div>
+        </section>
+
+        <!-- ── BROWSER tile ── -->
+        <section class="tile" id="tile-browser" data-tile="browser"
+          data-map="BROWSER (in-tree): BrowserEditorInput + WebContentsViewRendererFeature — src/vs/workbench/contrib/browserView/ + src/vs/platform/browserView/electron-main/browserView.ts">
+          <header class="tile-head">
+            <svg class="ic-15"><use href="#i-globe"/></svg>
+            <span class="tile-title">Browser</span>
+            <div class="tile-spacer"></div>
+            <span class="tile-sub mono demo-only">chromium-1243 · CDP ok</span>
+            <button class="tmenu" data-action="tile-menu" data-tile="browser" aria-label="Browser tile options"><svg class="ic-16"><use href="#i-dots"/></svg></button>
+          </header>
+
+          <div class="bp-toolbar demo-only">
+            <button class="navb" data-action="nav-back" aria-label="Back"><svg class="ic-14"><use href="#i-chev-l"/></svg></button>
+            <button class="navb" data-action="nav-fwd" aria-label="Forward"><svg class="ic-14"><use href="#i-chev-r"/></svg></button>
+            <button class="navb" data-action="nav-reload" aria-label="Reload"><svg class="ic-14"><use href="#i-refresh"/></svg></button>
+            <button class="omni mono" data-action="omni"><svg class="ic-12"><use href="#i-lock"/></svg>https://staging.acme.dev/login</button>
+            <button class="schip mono" id="session-chip" data-action="session-info" title="Browser session scope">
+              <span class="dot dot-amber"></span><span id="session-text">ws-acme · partition:persist:ws-acme</span>
+            </button>
+            <button class="vchip mono" id="viewport-chip" data-action="viewport">1280×800</button>
+          </div>
+
+          <div class="bp-viewport demo-only" id="bp-viewport">
+            <span class="bp-mocktag mono">mock render · no network</span>
+            <div class="bp-card">
+              <div class="bp-logo" aria-hidden="true"><svg class="ic-18"><use href="#i-logo"/></svg></div>
+              <h3 class="bp-title">Sign in to Acme</h3>
+              <p class="bp-sub">staging · acme.dev</p>
+              <label class="bp-label" for="bp-email-m">Email</label>
+              <div class="bp-input mono" id="bp-email-m">ops@acme.dev</div>
+              <label class="bp-label" for="bp-pass-m">Password</label>
+              <div class="bp-input mono" id="bp-pass-m">••••••••••</div>
+              <div class="bp-submit-wrap">
+                <div class="bp-btn" tabindex="0" role="button" aria-label="Sign in (mock page)">Sign in</div>
+                <span class="aring" id="agent-ring" tabindex="0" role="img" aria-label="Agent A clicked this button at 14:31:58"></span>
+                <span class="atip mono">
+                  Agent A clicked · 14:31:58 · browser.click
+                  <span class="atip-p mono" id="tip-partition">partition:persist:ws-acme</span>
+                </span>
+              </div>
+              <a class="bp-link" data-action="mock-page" role="button" tabindex="0">Forgot password?</a>
+            </div>
+            <p class="bp-pagefoot mono">© 2025 Acme · staging build 4f2c1a</p>
+          </div>
+
+          <div class="bp-foot demo-only mono">real rendering: prototypes/browser/ (Electron WebContentsView + CDP)</div>
+
+          <div class="empty fr-only">
+            <svg class="ic-26"><use href="#i-globe"/></svg>
+            <p>No browser session — pick an environment, then open a page</p>
+            <button class="btn ghost" data-action="cta-open-session">Open workspace session</button>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════════════ STATUS BAR (26px) ═══════════════ -->
+  <footer class="statusbar" data-map="statusbar part — src/vs/workbench/browser/parts/statusbar/">
+    <button class="sbi mono" id="sb-env" data-action="env-menu" aria-label="Environment">
+      <span class="dot dot-amber" id="sb-env-dot"></span><span id="sb-env-text">env: container · node-20</span>
+    </button>
+    <button class="sbi mono" data-action="sb-git" aria-label="Git status">
+      <svg class="ic-12"><use href="#i-branch"/></svg>main<b class="ok-t">✓</b>
+    </button>
+    <div class="sb-spacer"></div>
+    <button class="sbi mono" id="sb-agents" data-action="show-approval" aria-label="Agents and approvals">
+      <span class="dot dot-amber pulse" id="sb-agents-dot"></span><span id="sb-agents-text">2 agents · <b class="amber-t">1 approval needed</b></span>
+    </button>
+    <button class="sbi mono" id="sb-model" data-action="model-menu" data-agent="a" aria-label="Model picker">
+      <span id="sb-model-name">claude-4.5-sonnet</span><span class="chev">▾</span>
+    </button>
+    <span class="sb-ver mono">Flauz v0.1 (mock)</span>
+  </footer>
+</div>
+
+<!-- ═══════════════ COMMAND PALETTE overlay ═══════════════ -->
+<div class="overlay" id="palette-overlay" hidden>
+  <div class="backdrop" data-action="palette-close"></div>
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette"
+    data-map="quick input — src/vs/platform/quickinput/browser/quickInputService.ts">
+    <div class="pal-in">
+      <svg class="ic-15"><use href="#i-search"/></svg>
+      <input id="palette-input" placeholder="Search tasks, agents, commands…" autocomplete="off" spellcheck="false" aria-label="Search commands">
+      <span class="kbd mono">esc</span>
+    </div>
+    <div class="pal-list" id="pal-list" role="listbox" aria-label="Commands"></div>
+    <div class="pal-foot mono">↑↓ navigate · ⏎ run · esc close</div>
+  </div>
+</div>
+
+<!-- ═══════════════ FIRST-RUN welcome card ═══════════════ -->
+<div class="welcome" id="welcome" hidden role="dialog" aria-label="Welcome">
+  <div class="w-msg">Welcome to Flauz — every surface is co-equal. Start anywhere.</div>
+  <div class="w-actions">
+    <button class="btn solid-amber" data-action="welcome-back">Back to demo state</button>
+    <button class="w-x" data-action="welcome-dismiss" aria-label="Dismiss welcome card">✕</button>
+  </div>
+</div>
+
+<!-- shared popover root -->
+<div class="popover" id="popover" role="menu" hidden></div>
+
+<!-- toast stack -->
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flauz Workbench (analog shell)</title>
+<style>
+  :root{
+    --bg:#0a0a0b; --panel:#111113; --border:#27272a; --border-soft:#1c1c1f;
+    --text:#d4d4d8; --muted:#8b8b93; --accent:#fbbf24; --teal:#2dd4bf;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1440px;height:900px;overflow:hidden;background:var(--bg);color:var(--text);
+    font:12px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+  .bar{display:flex;align-items:center;gap:10px;padding:0 12px;height:44px;background:var(--panel);
+    border-bottom:1px solid var(--border)}
+  .logo{width:18px;height:18px;background:var(--accent);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+  .brand{font-weight:600;letter-spacing:.2px}
+  .ws{color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:2px 8px}
+  .rail{position:absolute;left:0;top:44px;bottom:26px;width:48px;background:var(--panel);
+    border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;
+    padding-top:10px;gap:8px}
+  .rail .i{width:32px;height:32px;border-radius:6px;display:grid;place-items:center;color:var(--muted);
+    font-family:var(--mono);font-size:11px}
+  .rail .i.on{color:var(--accent);background:#1c1710}
+  .pane{position:absolute;background:var(--panel);border:1px solid var(--border);border-radius:8px;
+    display:flex;flex-direction:column;overflow:hidden}
+  .pane h2{font-size:11px;font-weight:600;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--border-soft);
+    display:flex;justify-content:space-between;letter-spacing:.4px;text-transform:uppercase}
+  .pane h2 b{color:var(--text);font-weight:500}
+  .status{position:absolute;left:0;right:0;bottom:0;height:26px;background:var(--accent);color:#1c1917;
+    display:flex;align-items:center;gap:18px;padding:0 12px;font-size:11.5px;font-weight:500}
+  .status .r{margin-left:auto;display:flex;gap:18px}
+  .code{flex:1;padding:8px 0;font-family:var(--mono);font-size:11.5px;line-height:1.55;overflow:hidden}
+  .code .ln{display:flex}
+  .code .n{width:34px;text-align:right;padding-right:10px;color:#52525b;flex:none;user-select:none}
+  .kw{color:#e5a66d}.fn{color:#e6e0af}.str{color:#a3be8c}.cm{color:#6b7280}.num{color:#d8a657}
+  .browser-slot{flex:1;display:grid;place-items:center;background:
+    repeating-linear-gradient(45deg,#131316 0 12px,#0f0f12 12px 24px)}
+  .slot-label{font-family:var(--mono);font-size:11px;color:var(--accent);text-align:center;line-height:1.8}
+  .term{flex:1;font-family:var(--mono);font-size:11.5px;line-height:1.6;padding:8px 10px;overflow:hidden}
+  .term .p{color:var(--teal)} .term .o{color:#a1a1aa} .term .g{color:#a3be8c}
+  .tabs{display:flex;border-bottom:1px solid var(--border-soft)}
+  .tab{padding:5px 12px;font-size:11.5px;color:var(--muted);border-right:1px solid var(--border-soft)}
+  .tab.on{color:var(--text);background:#17171a;box-shadow:inset 0 2px 0 var(--accent)}
+  #toggle{position:absolute;z-index:40;right:12px;top:52px;background:#1c1917;color:var(--accent);
+    border:1px solid #3f2f0d;border-radius:6px;padding:5px 10px;font-size:11.5px;font-family:var(--mono)}
+  /* layout A: browser pane right, terminal bottom-left */
+  #editor{left:58px;top:56px;width:660px;height:470px}
+  #terminal{left:58px;top:534px;width:660px;height:336px}
+  #browser{left:726px;top:56px;width:664px;height:814px}
+  body.layoutB #editor{left:726px;top:56px;width:664px;height:470px}
+  body.layoutB #terminal{left:726px;top:534px;width:664px;height:336px}
+  body.layoutB #browser{left:58px;top:56px;width:660px;height:814px}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="logo"></div><div class="brand">Flauz</div>
+    <div class="ws">acme-portal ▾</div>
+    <div style="color:var(--muted)">analog workbench shell — real Code OSS renders these regions itself</div>
+  </div>
+  <div class="rail">
+    <div class="i">EX</div><div class="i">SR</div><div class="i">SC</div><div class="i">AG</div>
+    <div class="i on">BR</div><div class="i">TK</div><div class="i">RS</div>
+  </div>
+
+  <button id="toggle">toggle workbench layout ⇄</button>
+
+  <section class="pane" id="editor">
+    <h2><b>editor.tsx</b><span>editor surface (workbench DOM)</span></h2>
+    <div class="tabs"><div class="tab on">page.tsx</div><div class="tab">agent.ts</div><div class="tab">spec.md</div></div>
+    <div class="code">
+      <div class="ln"><span class="n">1</span><span><span class="kw">export function</span> <span class="fn">LoginPage</span>() {</span></div>
+      <div class="ln"><span class="n">2</span><span>  <span class="cm">// hardened by Agent A (wave1 demo)</span></span></div>
+      <div class="ln"><span class="n">3</span><span>  <span class="kw">const</span> [state, setState] = <span class="fn">useState</span>(<span class="str">'idle'</span>)</span></div>
+      <div class="ln"><span class="n">4</span><span>  <span class="kw">return</span> (</span></div>
+      <div class="ln"><span class="n">5</span><span>    &lt;<span class="fn">form</span> onSubmit={handleSubmit} noValidate&gt;</span></div>
+      <div class="ln"><span class="n">6</span><span>      &lt;<span class="fn">input</span> type=<span class="str">"email"</span> required /&gt;</span></div>
+      <div class="ln"><span class="n">7</span><span>      &lt;<span class="fn">input</span> type=<span class="str">"password"</span> minLength={<span class="num">12</span>} /&gt;</span></div>
+      <div class="ln"><span class="n">8</span><span>      &lt;<span class="fn">button</span>&gt;Sign in&lt;/<span class="fn">button</span>&gt;</span></div>
+      <div class="ln"><span class="n">9</span><span>    &lt;/<span class="fn">form</span>&gt;</span></div>
+      <div class="ln"><span class="n">10</span><span>  )</span></div>
+      <div class="ln"><span class="n">11</span><span>}</span></div>
+    </div>
+  </section>
+
+  <section class="pane" id="terminal">
+    <h2><b>terminal</b><span>z@node-20 · container</span></h2>
+    <div class="term">
+      <div><span class="p">z@node-20:/workspace/acme-portal$</span> <span class="o">pnpm test --filter ui</span></div>
+      <div class="g"> ✓ ui/src/login.test.tsx (12 tests) 2.1s</div>
+      <div class="o">Test Files  1 passed (1)</div>
+      <div><span class="p">z@node-20:/workspace/acme-portal$</span> ▌</div>
+    </div>
+  </section>
+
+  <section class="pane" id="browser">
+    <h2><b>browser</b><span>WebContentsView mounts over this region (native)</span></h2>
+    <div class="browser-slot" id="slot">
+      <div class="slot-label">native WebContentsView region<br>
+        (rendered by a separate Chromium renderer above this DOM)</div>
+    </div>
+  </section>
+
+  <div class="status">
+    <span>env: container · node-20</span><span>main ✓</span>
+    <span class="r"><span>◉ 1 agent · pane session ws-acme</span><span>Flauz proto</span></span>
+  </div>
+
+<script>
+  const slot = () => document.getElementById('slot');
+  function report() {
+    // Report the INNER area of the browser pane (below its header) in window coords.
+    const r = slot().getBoundingClientRect();
+    window.flauzHost.reportPaneRect({
+      x: Math.round(r.left), y: Math.round(r.top),
+      width: Math.round(r.width), height: Math.round(r.height),
+    });
+  }
+  window.flauzHost.onAskRect(report);
+  window.flauzHost.onToggleLayout(() => {
+    document.body.classList.toggle('layoutB');
+    // give the transition a beat, then report the new region
+    setTimeout(report, 250);
+  });
+  window.addEventListener('load', () => setTimeout(report, 120));
+</script>
+</body>
+</html>
