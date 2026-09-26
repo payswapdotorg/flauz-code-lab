@@ -124,3 +124,28 @@ Wave 3 executed through a hostile platform window: the SyntaxError generation-qu
 - §8 measurement closure (absolute baselines, AHP prewarm contribution, pinned ext-host RSS, browser-tool cold/warm) — H's measure-§8.md maps each to its exact CI job.
 
 **The roadmap position**: Waves 1-2 answered "what is Flauz on Code OSS" (investigation, DL-1..15). Wave 3 answered "can the vertical slice be built additively, verified in-sandbox, and kept fork-free" — yes: 149 new-path files across three branches (58+22+69, including each lane's flauz-delivery/ staging docs), zero upstream files touched, the FORK-CRITICAL ledger empty. The next wave is integration (flauz/main assembly, first real CI run, first real boot) — everything it needs is now staged and pinned.
+
+---
+
+# Wave-4 Addendum (TL#2, 2026-09-26 — the multi-environment + hardening wave)
+
+**Basis**: 3 product-code lanes (I: browser policy; J: environments; K: workflow envelope + ledger hardening + orchestrator messaging), all delivered with sha256-verified transit and adjudicated (DECISION-LOG.md now DL-29..DL-38). Code branches on the mirror payswapdotorg/Flauz: `flauz/wave4/browser-policy` (PR #1, CI GREEN), `flauz/wave4/workflow-envelope` @ 7c638c7d (PR #2; M1-M6; the dedicated flauz-workflow.yml Lane-K workflow first-run GREEN), `flauz/wave4/environments` @ c52e2724 (PR #3; CI starting at adjudication time). Base `flauz/main` @ a4c2451. FORK-CRITICAL ledger EMPTY on all three.
+
+## What now exists (on the lane branches, staged for the round-20 merge)
+
+1. **The browser policy layer** (extensions/flauz-browser, Lane I): the layered policy engine L1-L4 + the per-agent partition model + the CDP-bypass tamper class; 96 test cases; the dedicated flauz-browser.yml canary line. PR #1 CI GREEN (96 cases + B-POLICY canary boot + Flauz Canaries).
+2. **The workflow envelope, hardened end-to-end** (extensions/flauz-workflow + flauz-workspace additions, Lane K, M1-M6): envelope v1 (27/27); ledger hardening — the DL-20 hook closed: signed checkpoints (user-keystore fixture-key interface), the size watermark (truncated-tail class), extended verifyLedger (51/51); A2A messaging — the orchestration-layer bus (`.flauz/a2a/messages.jsonl`, four kinds, cursor projection, DL-36) + the typed TS mirror + 22 tamper fixtures; the M3 hotfix its own canary caught (optional-key enforcement); AHP trigger interop as mapping + emission drafts + the DL-22 chatsnapshot watch spec; C-WORKFLOW canary + flauz-workflow.yml (deterministic + drift-gated). Suites 65/55/31/12 + canary 5/5 + fork-critical-guard PASS.
+3. **The environment registry** (extensions/flauz-environments, Lane J): typed descriptors (`flauz.environments/v0`), registry lifecycle, 4 provider adapters (ssh-local with the AHP RemoteProxy bridge spec citing the `vscode-test-resolver` blueprint; container; cloud-sandbox entitlement-free with vault-only apiKeyRef; workspace-remote), connection plans (the v0 artifact — no live connections), the N-8 16-surface continuity model with switch plans + PERF §5.5 overhead accounting, C-ENV canary (A1-A8) + flauz-environments.yml, a 45-file bad matrix + golden pins, INTEGRATION-GAP 11-row table. 41/41 tests, canary 45/45 rejections + 5 pins, hygiene audit green.
+
+## The operational story (recorded for the record)
+
+Wave 4 executed through the account's worst platform window to date: a ~5h agent-generation regime (09:40-14:10 UTC) that landed work orders but never fired their turns, destroyed fresh chats outright (HTTP 500), and silently killed mid-flight sessions — with plain-chat turns healthy throughout (the hourly 'Reply with exactly: OK' probes kept returning). Two full recoveries by message-batch forensics: Lane K's M2 (a completed 270-block turn stranded in a 'message-side-dead' chat — reconstructed, pod-harvested, 62/62 sha256) and the K3 M3-M6 session itself (relaunched onto a fresh chat after two destroyed homes, then completed in one 41-minute turn). The stale-slot physics were learned (3/3 idle pods block new agent turns; release before dispatch). Renderer tabs wedge during heavy generation — the server message tree is the only reliable monitor; content blocks commit at turn end only.
+
+## What Wave 4 deliberately leaves open (the round-20 + Wave-5 doors)
+
+- **Round-20 integration WO (surgical)**: merge PR #1 + #2 + #3 into flauz/main (watch the single .eslint-allowed-javascript-files append seam); fix ledger.ts's single format flag + the 7 M1-era eslint findings + reclassify the R6 perf mark-pair posture (willConnectCore/didConnectCore are chat-exercised, not boot-exercised) with the methodology DL note.
+- **Live resolver wiring** (Wave 5/6): the `resolvers` grant per DL-34 + INTEGRATION-GAP §3; the P1/P2 canary steps (picker render, live switch/re-hydration) wait on it.
+- **Resource-claim enforcement** (DL-38, Wave-5 candidate): the Core-side hook on the chatParticipant toolInvocation surface.
+- **AHP live dispatch** (mapping-only in v0), the toolInvocationToken + HumanApproval digest binding, chatEditing snapshot evidence (DL-22 spec watch).
+
+**The roadmap position**: Waves 1-2 investigated (DL-1..15), Wave 3 built the vertical slice (DL-16..28), Wave 4 hardened it and built the multi-environment + multi-workflow story (DL-29..38) — 3 more additive branches (44 + 62+42 + 89 files), zero upstream files touched, FORK-CRITICAL still EMPTY. Wave 5 (prompts staged: L release pipeline + update channel, M gallery + branding, N legal closure + telemetry posture) is the distribution wave — it assumes the round-20 merge has assembled all six flauz extensions onto flauz/main.
