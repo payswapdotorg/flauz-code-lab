@@ -267,3 +267,95 @@ The round-7 canary flake (ripgrep-prebuilt `api.github.com` 403 from the unauthe
 3. **The 18-eslint-findings class** (round 18, the first fully-completed hygiene run): duplicate imports (merged, inline `type` modifier), `in`-operator (a `hasKey` own-property utility exported from ledger.ts — the rule's blessed replacement), partial platform test-fakes (upstream's own `eslint-disable-next-line local/code-no-dangerous-type-assertions` pattern, e.g. extHostAuthentication.integrationTest.ts:212), unexternalized double-quoted strings (single-quoted), bracket-notation for identifier keys.
 4. **Hygiene #22 GREEN end-to-end** (core-ci + hygiene + eslint + valid-layers-check + define-class-fields-check + vscode-dts-compile-check + tsec-compile-check) on 7c6615c4 — the full upstream pipeline passes with the Flauz delta in-tree.
 5. **The canaries were absence-shaped until round 16**: their boot-level assertions passed while the extensions failed activation — the bundling fix (DL-29) turned them into presence tests; Canaries GREEN with real activations from round 17 on (memory-snapshot job green from round 16's data onward).
+
+---
+
+# Wave-4-exit adjudication — the lane-report decision proposals (2026-09-26, TL#2)
+
+Wave 4 delivered all three lanes onto `flauz/main` @ `4591b58c` (PR #1 browser-policy + PR #2 workflow-envelope M1-M6 + PR #3 environments; six flauz extensions present; FORK-CRITICAL ledger EMPTY on every lane, TL-verified from the harvested bundles). The workers' final reports carried decision proposals; this section adjudicates them into the record.
+
+**Renumbering note**: the workers proposed under their own local numbers (J: "DL-29..DL-33"; K: "DL-29+ candidates"). The first-CI-loop adjudication earlier the same day (this file, above) had already consumed DL-29/DL-30 — the proposals are therefore entered as DL-31..DL-35 (J) and DL-36..DL-39 (K). Worker reports are cited by lane and section, never by their provisional numbers.
+
+## DL-31 — Descriptor schema versioning: flauz.environments/v0 exact-match pin (J)
+
+**Ruling**: ADOPTED as proposed. `$schema` is pinned by exact match; evolution ships `v1` WITH a migration path; in-place mutation of a published descriptor schema is prohibited. Same discipline class as DL-21 (the vertical-slice contract).
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS / INTEGRATION-GAP.md §5 (flauz-environments descriptor loading, registry.ts).
+
+**Class**: EASILY-REVERSED (schema discipline).
+
+## DL-32 — Provider trust-posture defaults (J)
+
+**Ruling**: ADOPTED: ssh-local `unknown` (host-key pinning gate), container `trusted` (workspace-controlled definition), cloud-sandbox `untrusted` (read-only tier default), workspace-remote `unknown`. Environment escape stays `environmentPower`-class, default-confirm.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS; SECURITY-MODEL.md §3.4 (cloud tiers / escape confirmations).
+
+**Class**: EASILY-REVERSED (posture defaults; no code).
+
+## DL-33 — Cloud-sandbox entitlement posture: provider extensions only (J)
+
+**Ruling**: ADOPTED, hardening DL-8: Flauz cloud environments are provider extensions ONLY; the in-tree `cloudSandbox*` services stay reference-only (Copilot-entitlement-bound); `apiKeyRef` vault references are validated at the schema level — literal keys rejected.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS; INTEGRATION-GAP.md §2 row 6 (cloudSandboxAgentHost.ts, cloudSandboxReadOnlySessionHandler.ts citations).
+
+**Class**: EASILY-REVERSED (posture).
+
+## DL-34 — The `.flauz/` state-envelope seam discipline (J)
+
+**Ruling**: ADOPTED and CODIFIED by this entry: extension-owned state files under `.flauz/` (flauz-workspace `tasks.json` + `ledger.jsonl`; flauz-environments `environments.json`; flauz-agent `a2a/messages.jsonl` + `a2a/cursors.json`; flauz-workflow `workflows/`) share the envelope discipline BY CONVENTION — canonical serialization, atomic writes (tmp+rename), git-diffability, zero cross-extension imports, zero shared packages. Future lanes copy the discipline verbatim from this entry; no enforcement mechanism is added in v0.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS; the four live state files as delivered by lanes G (Wave 3), K and J (Wave 4).
+
+**Class**: STRUCTURAL (doc-level contract).
+
+## DL-35 — API-proposal grant timing: no dead config (J)
+
+**Ruling**: ADOPTED as the house rule generalizing DL-19: a `product.flauz.json` enabledApiProposals grant lands ONLY together with the live code that exercises it — the product list REPLACES the extension's own declaration, so a premature grant is load-bearing for nothing. First application: `"flauz.flauz-environments": ["resolvers"]` ships with the live resolver code (the Wave-4-next connection driver), not before.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS; extensionsProposedApi.ts product-list-WINS semantics (this file's Wave-3 record, DL-19).
+
+**Class**: CONFIG.
+
+## DL-36 — `derivedFrom`: the cross-run linking primitive (K)
+
+**Ruling**: ADOPTED: new evidence rows link to the original run's rows via the task-event payload `derivedFrom` field; the 7-field ledger row schema stays untouched; the fragment `history` records per-run derivations. This is the primitive Wave-5 evidence navigation builds on.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (M1); envelope.ts history + WorkflowService re-run.
+
+**Class**: EASILY-REVERSED (data-model convention).
+
+## DL-37 — The A2A journal: THE inter-agent transport primitive (K)
+
+**Ruling**: ADOPTED: `.flauz/a2a/messages.jsonl` (`flauz.a2a/v0`; four kinds: task-delegation, result-report, steering-relay, resource-claim; mailboxes/cursors as projections) is the canonical inter-agent message layer for Flauz orchestrators. The DL-20-hardened evidence ledger remains the ONLY tamper-evident layer — the bus carries routing, never proof; verifiable facts ride the ledger.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (M3); a2a.mjs + messaging.ts (byte-canonical G/TS parity pinned by test).
+
+**Class**: STRUCTURAL.
+
+## DL-38 — Deterministic idempotency keys: `<surface>/<id>/run/<attempt>` (K)
+
+**Ruling**: ADOPTED as the house pattern for every retryable side-effect request spoken to a host-owned surface: the deterministic key makes transport retries return the original effect. `workflowRunRequestId` (AHP trigger emission) is the first instance.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (M4); triggers.ts emission drafts.
+
+**Class**: EASILY-REVERSED (convention).
+
+## DL-39 — Resource-claim enforcement: deferred, flagged (K)
+
+**Ruling**: NOT decided for implementation now — v0 claim notices stay informational (the gap is owned, not forgotten). The enforcement hook (rejecting a mutation whose Claim+Lease is absent/expired) is a Wave-5 candidate riding the chatParticipant toolInvocation surface and needs a Core-side hook design first; propose as a new entry when that design exists.
+
+**Evidence**: K REPORT §GAPS-AND-SKIPS (M3) + §DECISION-LOG-PROPOSALS.
+
+**Class**: record (flagged).
+
+## J's three open integration questions — TL rulings
+
+1. **Env picker surface**: stays EXTENSION-LAND (command palette in v0; view/tree later). A product-side picker or status-bar env indicator would be FORK-CRITICAL-class — demoted per the DL-12 discipline. Ruling recorded now, ahead of Wave-5 UX, per the worker's ask.
+2. **`chatSessionsProvider` grant timing**: the grant lands ONLY with the Flauz session-content connector (C-36) — the DL-35 no-dead-config rule. Canary coverage of the surface does not justify a premature grant (the rota inventories the catalog; grants follow live code).
+3. **Extension-host affinity for the future live switch driver**: rides the Agent Bridge's pinned ext-host slot — no new slot, no DL-5-class entry. Revisit only if a measurement shows registry work interfering with the bridge.
+
+## Post-Wave-4 facts entered into the record
+
+1. **flauz/main @ 4591b58c** carries all three lanes (PRs #1/#2/#3 merged); the six flauz extensions are present; every transit was TL-harvested from a live pod via the workspaces files API and sha256-verified before landing (Lane I 44/44; Lane K 42/42 across 5 commits; Lane J 89/89 across 3 commits).
+2. **Known mechanical debt at merge time** (parked to the round-20 surgical work order, in flight at adjudication time): the ledger.ts format flag (an M2 Edit-tool tab-expansion survivor), the 7 M1-era eslint findings (single-quoted strings + one duplicated import), and the R6 perf mark-pair posture (the `willConnectCore`/`didConnectCore` pair is chat-exercised-class — absent on boot-only profiles). The reclassification ruling lands as a DL entry together with the R20 delivery.
+3. **The renumbering fact**: worker-proposed numbers shifted (J's DL-29..33 -> DL-31..35; K's candidates -> DL-36..39) because the first-CI-loop adjudication consumed DL-29/DL-30 earlier the same day (db87764, this file, above).
