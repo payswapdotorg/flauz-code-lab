@@ -233,3 +233,37 @@ Inputs adjudicated: Worker F (`wave3/f-agent-bridge` REPORT.md — Agent Bridge 
 1. **product.json @ 9bf9ae764da has NO `extensionsGallery` key** (46 top-level keys — F verified during the rebuild; the Wave-3 work-order assumption was wrong). Amends DL-7's premise: the gallery ships ONLY via the overlay; F's merger test 4 pins the actual posture as a tripwire.
 2. **Default-agent mechanism verified end-to-end in code**: no product key selects the default agent — it is a statically-contributed `isDefault` participant (gated on the defaultChatParticipant proposal, force-enabled per DL-19) + `defaultChatAgent: null` deletion (DL-16) disabling the Copilot setup/entitlement machinery (chatEntitlementService.ts:457-460), leaving `flauz.agent` the sole default via `_preferExtensionAgent` (chatAgents.ts:458-484). U-1 canary checklist D1-D11 carries the closure statuses.
 3. **Wave-3 exit criteria met**: golden path with HumanApproval gate green in both seam implementations (F orchestrator test; G state-machine suite); FORK-CRITICAL ledger EMPTY on all three branches (verified by TL from the harvested bundles against the local pristine mirror); product keys → this adjudication; U-1/C-20 closure spec delivered (F canary checklist + H canary workflows).
+
+---
+
+# Wave-4-integration adjudication — the first-CI loop (2026-09-26, TL#2)
+
+The integration milestone (flauz/main assembly + first real CI + first real IDE boots) executed through a 19-round CI debug loop. Adjudications below close the loop's open decisions; the loop's operational log lives in the FINAL-REPORT Wave-4 integration addendum.
+
+## DL-29 — In-tree flauz extension build: bundle-extensions.mjs (esbuild -> dist/) (TL)
+
+**Ruling**: the flauz extensions build via `build/flauz/scripts/bundle-extensions.mjs` — a zero-dep driver that esbuilds each discovered `extensions/flauz-*/src/extension.ts` to `dist/extension.js` (ESM, `vscode` externalized, the repo's own esbuild resolved from `build/node_modules`), invoked after every compile that precedes a boot (perf pair x2, canaries x4). tsc emit is NOT viable for these sources (NodeNext `.ts` specifiers + `allowImportingTsExtensions` forbid emit; the node-type-stripping test path depends on `.ts` specifiers). `flauz-workspace` main unified to `./dist/extension.js`. Per-extension `esbuild.mts` scripts in the upstream style graduate with Wave-5 packaging.
+
+**Evidence**: perf run #18 — every real boot failed activation with "Cannot find module .../dist/extension.js" (nothing ever built the main targets; noEmit tsconfigs + type-stripped tests), inflating the pair with +4338ms p95 activation-ERROR outliers; round-16 receipts — 3/3 bundles built, `--verify` green, `vscode` externalized in output, ESM parse OK, all 98 tests green.
+
+**Class**: STRUCTURAL (build-time contract).
+
+## DL-30 — Perf-pair measurement protocol: warmup-discarded, repeated-flag markers (TL)
+
+**Ruling**: (a) one untimed warmup boot per side before the measured N=10 alternating loop (outputs to /dev/null, fresh warmup user-data-dirs) — the section 1.3 budgets gate steady-state Flauz overhead, and the round-21 data showed the coldest-boot-of-the-job artifact (flauz run 1 = +360ms over its own median, first boot after compile+bundle) while steady-state measured p50 +4.0ms (budget +75ms); (b) duration-marker pairs pass as REPEATED `--prof-duration-markers` flags — the argv type is `string[]` (minimist never splits comma-joined values; split('-') on a comma-joined pair yields 3+ parts and every duration resolves 0, which is why the markers TSVs were empty on both sides).
+
+**Evidence**: perf run #21 timers/markers artifacts (TL-decoded: ellapsed column, standard_start on all runs, empty markers files, p50 +4.0ms vs p95 +261ms); startupTimings.ts duration-marker writer + argv.ts `string[]` declaration.
+
+**Class**: CONFIG (measurement protocol).
+
+## DL-28 addendum — GITHUB_TOKEN narrow exception ACTIVATED (was: deferred, flagged)
+
+The round-7 canary flake (ripgrep-prebuilt `api.github.com` 403 from the unauthenticated shared runner IP) triggered the exception this entry reserved: the auto-provided workflow token (read-only; zero repo secrets configured) now scopes the npm-install and compile steps across `flauz-{hygiene,perf,canaries}.yml`. The no-secrets policy holds — auto-token only. Editorial note: the hygiene workflow's inline comment cites the pre-renumbering id "DL-20" (H-lane numbering); it reads as DL-28 after the unified renumbering.
+
+## Post-loop facts entered into the record
+
+1. **Upstream hygiene stream semantics** (validated by a TL-built local sweep reproducing build/hygiene.ts against the green upstream tree — 0 upstream violations): `filter(indentationFilter)` has NO restore, so files exempt from indentation (fixtures/**, extensions/**/*.d.ts, .yml, .sh, .md) never REACH the copyright check; the unicode check runs independently upstream of the drop; minimatch dot:false keeps dotfiles out of the `all` set entirely. The sweep is permanent TL tooling (`node hygiene_sweep.mjs`).
+2. **The runner-shutdown plague**: 4 consecutive infra-side runner kills (exit 143, "runner has received a shutdown signal"), each 1-2 minutes into tsgo-typecheck under the 7-way PARALLEL `npm-run-all2 -lp` pipeline. Serialized to `-l` (same task set and order — upstream pr.yml fidelity preserved); zero shutdowns since.
+3. **The 18-eslint-findings class** (round 18, the first fully-completed hygiene run): duplicate imports (merged, inline `type` modifier), `in`-operator (a `hasKey` own-property utility exported from ledger.ts — the rule's blessed replacement), partial platform test-fakes (upstream's own `eslint-disable-next-line local/code-no-dangerous-type-assertions` pattern, e.g. extHostAuthentication.integrationTest.ts:212), unexternalized double-quoted strings (single-quoted), bracket-notation for identifier keys.
+4. **Hygiene #22 GREEN end-to-end** (core-ci + hygiene + eslint + valid-layers-check + define-class-fields-check + vscode-dts-compile-check + tsec-compile-check) on 7c6615c4 — the full upstream pipeline passes with the Flauz delta in-tree.
+5. **The canaries were absence-shaped until round 16**: their boot-level assertions passed while the extensions failed activation — the bundling fix (DL-29) turned them into presence tests; Canaries GREEN with real activations from round 17 on (memory-snapshot job green from round 16's data onward).
