@@ -233,3 +233,94 @@ Inputs adjudicated: Worker F (`wave3/f-agent-bridge` REPORT.md — Agent Bridge 
 1. **product.json @ 9bf9ae764da has NO `extensionsGallery` key** (46 top-level keys — F verified during the rebuild; the Wave-3 work-order assumption was wrong). Amends DL-7's premise: the gallery ships ONLY via the overlay; F's merger test 4 pins the actual posture as a tripwire.
 2. **Default-agent mechanism verified end-to-end in code**: no product key selects the default agent — it is a statically-contributed `isDefault` participant (gated on the defaultChatParticipant proposal, force-enabled per DL-19) + `defaultChatAgent: null` deletion (DL-16) disabling the Copilot setup/entitlement machinery (chatEntitlementService.ts:457-460), leaving `flauz.agent` the sole default via `_preferExtensionAgent` (chatAgents.ts:458-484). U-1 canary checklist D1-D11 carries the closure statuses.
 3. **Wave-3 exit criteria met**: golden path with HumanApproval gate green in both seam implementations (F orchestrator test; G state-machine suite); FORK-CRITICAL ledger EMPTY on all three branches (verified by TL from the harvested bundles against the local pristine mirror); product keys → this adjudication; U-1/C-20 closure spec delivered (F canary checklist + H canary workflows).
+
+---
+
+# Wave-4 Adjudication (TL#2, 2026-09-26 — lanes I / J / K unified renumbering)
+
+## DL-29 — `.mjs` allowlist policy at first-CI integration (W3 pre-claim ratified)
+
+**Ruling**: Flauz additive zero-dep scripts are written as `.mjs` (ESM imports) and MUST be listed in `.eslint-allowed-javascript-files` at the moment they first enter CI — the file's own policy, retroactively canonized because the Wave-3 first-CI integration relied on it before this entry existed (the code comment pre-claims DL-29). Lane J's 4-line append followed it exactly; no new `.js` files ever.
+
+**Evidence**: `.eslint-allowed-javascript-files` lines 170-180 (comment + Wave-3 script list); Lane J REPORT §DELIVERABLE (the sanctioned single append); W3 first-CI debug loop history.
+
+**Class**: STRUCTURAL (repo policy).
+
+## DL-30 — Environment descriptor schema versioning (J-DL29)
+
+**Ruling**: `flauz.environments/v0` is pinned via exact `$schema` match; evolution = a v1 envelope with an explicit migration, never in-place reinterpretation; unknown keys are rejected (not ignored).
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS 1; `extensions/flauz-environments` schema validator + bad-matrix fixtures 01-08 (unknown-key class).
+
+**Class**: STRUCTURAL (artifact format).
+
+## DL-31 — Provider trust-posture defaults (J-DL30)
+
+**Ruling**: ssh-local `unknown` (host-key pinning gate), container `trusted` (workspace-controlled definition), cloud-sandbox `untrusted` (read-only tier default), workspace-remote `unknown`. Environment escape stays `environmentPower`-class, default-confirm.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS 2; `sshHostKeyTrust.ts` / `sshHostKeyPolicy.ts` / `cloudSandboxReadOnlySessionHandler.ts` citations; SECURITY-MODEL §3.4.
+
+**Class**: CONFIG.
+
+## DL-32 — Cloud-sandbox entitlement posture (J-DL31)
+
+**Ruling**: Flauz cloud environments are provider extensions ONLY (DL-8 hardened); in-tree `cloudSandbox*` services remain reference-only; `apiKeyRef`/`tokenRef` vault references are validated at the schema level (literals rejected).
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS 3; SECURITY-MODEL §3.5; adapter fixtures (literal-rejection class).
+
+**Class**: STRUCTURAL (posture).
+
+## DL-33 — `.flauz/` state-envelope seam convention (J-DL32)
+
+**Ruling**: the registry writes `.flauz/environments.json` as a SIBLING of flauz-workspace's `tasks.json`/`ledger.jsonl`, sharing the envelope discipline (canonical serialization, atomic tmp+rename, git-diffability) BY CONVENTION — no cross-extension imports (zero-dep), no shared package. The ".flauz state envelope discipline" is codified as a doc-level contract; future lanes copy it verbatim. flauz-workspace files untouched.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS 4; the descriptor store implementation (atomic write + canonical form).
+
+**Class**: EASILY-REVERSED (doc) / STRUCTURAL (the convention).
+
+## DL-34 — Resolvers grant timing (J-DL33)
+
+**Ruling**: add the `product.flauz.json` `resolvers` grant ONLY when live resolver code lands (no dead config; DL-19's REPLACE semantics make premature grants load-bearing for nothing). Lane J deliberately shipped registry+plans without the grant; the INTEGRATION-GAP §3 row is the tripwire for the Wave-5/6 live-wiring lane.
+
+**Evidence**: J REPORT §DECISION-LOG-PROPOSALS 5; INTEGRATION-GAP.md 11-row table; DL-19.
+
+**Class**: CONFIG.
+
+## DL-35 — `derivedFrom` cross-run linking primitive (K-M1)
+
+**Ruling**: canonize `derivedFrom` (task-event payload field; the 7-field ledger row schema untouched; the fragment `history` records per-run derivations) as THE cross-run linking primitive for Wave-5 evidence navigation.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (derivedFrom); envelope v1 + fixture coverage.
+
+**Class**: STRUCTURAL (ledger semantics, additive).
+
+## DL-36 — A2A journal as the agent-message primitive (K-M3)
+
+**Ruling**: canonize `.flauz/a2a/messages.jsonl` (`flauz.a2a/v0`, four kinds, cursor projection) as THE inter-agent transport for Flauz orchestrators; the DL-20-hardened ledger remains the ONLY tamper-evident layer (the bus carries routing, not proof).
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (A2A journal); `core/a2a.mjs` + `a2a.d.mts` + 22 tamper fixtures; C-26 boundary honored (no src/vs chat-transport changes).
+
+**Class**: STRUCTURAL (orchestration contract).
+
+## DL-37 — Deterministic run idempotency keys (K-M4)
+
+**Ruling**: adopt the `<surface>/<id>/run/<attempt>` key shape (`workflowRunRequestId`) as the house pattern for every retryable side-effect request spoken to host-owned surfaces.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (idempotency); triggers.ts mapping + emission drafts.
+
+**Class**: EASILY-REVERSED (convention).
+
+## DL-38 — Resource-claim enforcement: DEFERRED to Wave 5 (K-M3 gap)
+
+**Ruling**: NOT decided for v0. A2A claim/lease notices are informational in v0; enforcement (rejecting a mutation whose Claim+Lease is absent/expired) needs a Core-side hook — registered as a Wave-5 candidate on the chatParticipant toolInvocation surface. The gap is documented, not silently accepted.
+
+**Evidence**: K REPORT §DECISION-LOG-PROPOSALS (resource-claim) + §GAPS-AND-SKIPS; `src/extension.ts` executor-binding posture note.
+
+**Class**: record (deferred; Wave-5 backlog).
+
+## Post-Wave-4 facts entered into the record
+
+1. **Wave-4 exit criteria met on all three lanes**: FORK-CRITICAL ledger EMPTY (I: browser policy engine layered L1-L4; J: 89 files with one sanctioned allowlist append; K: M1-M6 with fork-critical-guard PASS in-lane and in CI); every transit TL-harvested from the worker pods and sha256-verified before landing (I 44/44, K 42/42 + M2 62/62, J 89/89).
+2. **Platform incident class recorded**: the account's agent-generation path ran a land-but-never-fire + chat-destruction regime for ~5h (09:40-14:10 UTC); two full lane deliveries (K M2, and K3's M3-M6 session) were recovered via message-batch forensics + live-pod harvest (lesson-175 doctrine) — the batch-store `content_blocks[].content` key is the only reliable assistant-payload read; `chats_http.py detail`'s string-only length count reads 0 for structured messages.
+3. **Mechanical debt parked for the round-20 integration WO** (surgical, one worker): ledger.ts single format-flag (the M2 Edit-tool tab-expansion class), the 7 M1-era eslint findings on PR #2, and the R6 perf mark-pair posture (willConnectCore/didConnectCore pair is chat-exercised, not boot-exercised — reclassify skip-on-absent with a methodology note here when the fix lands).
+4. **Wave-4 delivery physics**: worker sessions complete in ~38-41 min/turn when the platform admits them; blocks commit ONLY at turn end (a static DOM + 0-block server read mid-turn is NOT death); renderer tabs wedge during heavy generation (server tree is the monitor); the C-ENV and C-WORKFLOW canaries both ran green on first CI execution.
