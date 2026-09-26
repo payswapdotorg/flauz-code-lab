@@ -359,3 +359,17 @@ Wave 4 delivered all three lanes onto `flauz/main` @ `4591b58c` (PR #1 browser-p
 1. **flauz/main @ 4591b58c** carries all three lanes (PRs #1/#2/#3 merged); the six flauz extensions are present; every transit was TL-harvested from a live pod via the workspaces files API and sha256-verified before landing (Lane I 44/44; Lane K 42/42 across 5 commits; Lane J 89/89 across 3 commits).
 2. **Known mechanical debt at merge time** (parked to the round-20 surgical work order, in flight at adjudication time): the ledger.ts format flag (an M2 Edit-tool tab-expansion survivor), the 7 M1-era eslint findings (single-quoted strings + one duplicated import), and the R6 perf mark-pair posture (the `willConnectCore`/`didConnectCore` pair is chat-exercised-class — absent on boot-only profiles). The reclassification ruling lands as a DL entry together with the R20 delivery.
 3. **The renumbering fact**: worker-proposed numbers shifted (J's DL-29..33 -> DL-31..35; K's candidates -> DL-36..39) because the first-CI-loop adjudication consumed DL-29/DL-30 earlier the same day (db87764, this file, above).
+
+## Numbering reconciliation (TL, 2026-09-26 ~18:40 UTC)
+
+A parallel Wave-4 adjudication was pushed at 15:42 UTC to `tl/decision-log` (commit 8abd746) BEFORE the numbering collision with the first-CI-loop entries (db87764, 05:02) was discovered. That lineage numbered the lane proposals DL-30..DL-38 and carried one ruling the reconciled canon above did NOT: the `.mjs` allowlist policy (its DL-29). The canon lineage (this branch, tl/decision-log-w4 @ 9d3cf17) was renumbered to DL-31..DL-39 and is AUTHORITATIVE; 8abd746 is superseded. Its unique ruling is preserved below as DL-40 (append-numbered to avoid a third renumbering). The rolling branch `tl/decision-log` is re-pointed to this lineage. The FINAL-REPORT Wave-4 addendum's inline DL references were corrected to the canon numbering in the same pass.
+
+## DL-40 — `.mjs` allowlist policy at first-CI integration (W3 pre-claim ratified)
+
+**Ruling**: Flauz additive zero-dep scripts are written as `.mjs` (ESM imports) and MUST be listed in `.eslint-allowed-javascript-files` at the moment they first enter CI — the file's own policy, retroactively canonized because the Wave-3 first-CI integration relied on it before this entry existed (the code comment pre-claims DL-29). Lane J's 4-line append followed it exactly; no new `.js` files ever.
+
+**Evidence**: `.eslint-allowed-javascript-files` lines 170-180 (comment + Wave-3 script list); Lane J REPORT §DELIVERABLE (the sanctioned single append); W3 first-CI debug loop history.
+
+**Class**: STRUCTURAL (repo policy).
+
+*Renumbering note*: originally adjudicated 2026-09-26 15:42 UTC as DL-29 in the superseded 8abd746 lineage; preserved verbatim and append-numbered here (2026-09-26 ~18:40 UTC) so no existing canon reference shifts. Every W5+ worker instruction already says "read the log's tail for the true latest."
