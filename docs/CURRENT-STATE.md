@@ -15,8 +15,8 @@ Therefore:
 `payswapdotorg/Flauz` is the Code OSS fork.
 
 - Default `main`: upstream Code OSS line.
-- Active Flauz implementation line: `flauz/main`.
-- `flauz/main` is currently 53 commits ahead of the fork's default `main`, with no commits behind it at the review point.
+- Active Flauz implementation line: `flauz/main` (current handoff commit `279a2a84add1`).
+- `flauz/main` is ahead of the fork's default `main`; do not treat the numeric ahead-count as stable state—verify with Git compare before rebasing or merging.
 - The active line contains the Flauz agent, browser, environment, model, workflow, policy, evidence, and CI additions described by the TL2 wave reports.
 - Product integration PRs #1–#3 were merged into `flauz/main`.
 
